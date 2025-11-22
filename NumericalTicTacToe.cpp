@@ -1,4 +1,4 @@
-#include "NumericalTicTacToe_Classes.h"
+#include "NumericalTicTacToe.h"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -94,16 +94,15 @@ bool Numerical_Board::is_number_used(int number) const {
     return used_numbers.count(number) > 0;
 }
 
-//--------------------------------------- Numerical_Player Implementation
 
 Numerical_Player::Numerical_Player(string name, int player_number) 
     : Player<int>(name, player_number, PlayerType::HUMAN) {
     
     if (player_number == 1) {
-        // Player 1 gets odd numbers
+
         available_numbers = {1, 3, 5, 7, 9};
     } else {
-        // Player 2 gets even numbers
+
         available_numbers = {2, 4, 6, 8};
     }
 }
@@ -112,14 +111,12 @@ void Numerical_Player::use_number(int number) {
     available_numbers.erase(number);
 }
 
-//--------------------------------------- Numerical_Random_Player Implementation
 
 Numerical_Random_Player::Numerical_Random_Player(int player_number)
     : Numerical_Player("Computer Player " + to_string(player_number), player_number) {
     type = PlayerType::COMPUTER;
 }
 
-//--------------------------------------- Numerical_UI Implementation
 
 Numerical_UI::Numerical_UI() 
     : UI<int>("Welcome to Numerical Tic-Tac-Toe!\n"
@@ -163,13 +160,11 @@ Move<int>* Numerical_UI::get_move(Player<int>* player) {
                 }
             }
         }
-        
-        // Pick random position
+
         int pos_idx = rand() % empty_positions.size();
         x = empty_positions[pos_idx].first;
         y = empty_positions[pos_idx].second;
-        
-        // Pick random available number
+
         auto& available = num_player->get_available_numbers();
         auto it = available.begin();
         advance(it, rand() % available.size());
@@ -178,8 +173,7 @@ Move<int>* Numerical_UI::get_move(Player<int>* player) {
         cout << "\n" << player->get_name() << " plays: " 
              << number << " at position (" << x << ", " << y << ")\n";
     }
-    
-    // Remove used number from player's available set
+
     num_player->use_number(number);
     
     return new Move<int>(x, y, number);

@@ -7,13 +7,10 @@
 #include <cstdlib>
 #include <ctime>
 #include "BoardGame_Classes.h"
-#include "NumericalTicTacToe_Classes.h"
+#include "NumericalTicTacToe.h"
 
 using namespace std;
 
-/**
- * @brief Display main menu
- */
 void display_menu() {
     cout << "\n";
     cout << "========================================\n";
@@ -22,14 +19,11 @@ void display_menu() {
     cout << "1. Numerical Tic-Tac-Toe (Game 9)\n";
     cout << "0. Exit\n";
     cout << "========================================\n";
-    cout << "Choose a game: ";
+    cout << "Choose a game or to exit: ";
 }
 
-/**
- * @brief Play Numerical Tic-Tac-Toe
- */
 void play_numerical_tictactoe() {
-    cout << "\n*** Starting Numerical Tic-Tac-Toe ***\n";
+    cout << "\n=== Starting Numerical Tic-Tac-Toe ===\n";
 
     UI<int>* game_ui = new Numerical_UI();
 
@@ -40,7 +34,6 @@ void play_numerical_tictactoe() {
     GameManager<int> game_manager(game_board, players, game_ui);
     game_manager.run();
 
-    // Cleanup
     delete game_board;
     delete players[0];
     delete players[1];
@@ -50,9 +43,6 @@ void play_numerical_tictactoe() {
     cout << "\n*** Game Ended ***\n";
 }
 
-/**
- * @brief Main function
- */
 int main() {
     srand(static_cast<unsigned int>(time(0)));
 

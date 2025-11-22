@@ -1,5 +1,5 @@
 /**
- * @file NumericalTicTacToe_classes.h
+ * @file NumericalTicTacToe.h
  * @brief Numerical Tic-Tac-Toe game implementation (Game 9)
  * Player 1: Odd numbers (1, 3, 5, 7, 9)
  * Player 2: Even numbers (2, 4, 6, 8)
@@ -152,4 +152,4 @@ public:
     Player<int>** setup_players() override;
 };
 
-#endif // NUMERICAL_TICTACTOE_CLASSES_H
+#endif
