@@ -8,6 +8,7 @@
 #include <ctime>
 #include "BoardGame_Classes.h"
 #include "NumericalTicTacToe.h"
+#include "XO_4x4_Classes.h"
 
 using namespace std;
 
@@ -17,6 +18,7 @@ void display_menu() {
     cout << "   BOARD GAMES COLLECTION - Part 1\n";
     cout << "========================================\n";
     cout << "1. Numerical Tic-Tac-Toe (Game 9)\n";
+    cout << "2. 4x4 Tic-Tac-Toe (Game 7)\n";
     cout << "0. Exit\n";
     cout << "========================================\n";
     cout << "Choose a game or to exit: ";
@@ -32,6 +34,26 @@ void play_numerical_tictactoe() {
     Player<int>** players = game_ui->setup_players();
 
     GameManager<int> game_manager(game_board, players, game_ui);
+    game_manager.run();
+
+    delete game_board;
+    delete players[0];
+    delete players[1];
+    delete[] players;
+    delete game_ui;
+
+    cout << "\n*** Game Ended ***\n";
+}
+void play_4x4_tictactoe() {
+    cout << "\n=== Starting XO_4X4_Tic-Tac-Toe ===\n";
+
+    UI<char>* game_ui = new XO_4x4_UI();
+
+    Board<char>* game_board = new XO_4x4_Board();
+
+    Player<char>** players = game_ui->setup_players();
+
+    GameManager<char> game_manager(game_board, players, game_ui);
     game_manager.run();
 
     delete game_board;
@@ -62,10 +84,14 @@ int main() {
                 play_numerical_tictactoe();
                 break;
 
+            case 2:
+                play_4x4_tictactoe();
+                break;
             case 0:
                 cout << "\nThank you for playing! Goodbye!\n";
                 running = false;
                 break;
+        
 
             default:
                 cout << "\nInvalid choice! Please select 1 or 0.\n";
