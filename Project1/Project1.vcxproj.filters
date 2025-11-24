@@ -15,44 +15,40 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\BoardGame_Classes.h">
+    <ClInclude Include="FileName.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XO_5X5_Classes.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\NumericalTicTacToe.h">
+    <ClInclude Include="BoardGame_Classes.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\XO_4x4_Classes.h">
+    <ClInclude Include="NumericalTicTacToe.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\XO_Classes.h">
+    <ClInclude Include="XO_4x4_Classes.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XO_Classes.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\CMakeLists.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="..\dic.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\MainMenu.cpp">
+    <ClCompile Include="XO_5X5_Classes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\NumericalTicTacToe.cpp">
+    <ClCompile Include="NumericalTicTacToe.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\XO_4x4_Classes.cpp">
+    <ClCompile Include="XO_4x4_Classes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\XO_Classes.cpp">
+    <ClCompile Include="XO_Classes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\README.md">
+    <ClCompile Include="MainMenu.cpp">
       <Filter>Source Files</Filter>
-    </None>
+    </ClCompile>
   </ItemGroup>
 </Project>

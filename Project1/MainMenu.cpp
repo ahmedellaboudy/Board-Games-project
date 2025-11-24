@@ -9,6 +9,7 @@
 #include "BoardGame_Classes.h"
 #include "NumericalTicTacToe.h"
 #include "XO_4x4_Classes.h"
+#include "XO_5x5_Classes.h" 
 
 using namespace std;
 
@@ -19,6 +20,7 @@ void display_menu() {
     cout << "========================================\n";
     cout << "1. Numerical Tic-Tac-Toe (Game 9)\n";
     cout << "2. 4x4 Tic-Tac-Toe (Game 7)\n";
+    cout << "3. 5x5 Three-in-a-Row (Game 8)\n";
     cout << "0. Exit\n";
     cout << "========================================\n";
     cout << "Choose a game or to exit: ";
@@ -64,6 +66,12 @@ void play_4x4_tictactoe() {
 
     cout << "\n*** Game Ended ***\n";
 }
+void play_5x5_tictactoe() {
+    cout << "\n=== Starting 5x5 Three-in-a-Row ===\n";
+    XO_5x5_GameManager game_manager;
+    game_manager.run();
+    cout << "\n*** Game Ended ***\n";
+}
 
 int main() {
     srand(static_cast<unsigned int>(time(0)));
@@ -86,6 +94,9 @@ int main() {
 
             case 2:
                 play_4x4_tictactoe();
+                break;
+            case 3:  
+                play_5x5_tictactoe();
                 break;
             case 0:
                 cout << "\nThank you for playing! Goodbye!\n";
