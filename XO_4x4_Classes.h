@@ -42,6 +42,7 @@ public:
      // @brief Checks if the given player has won the game.
      // @param player Pointer to the player being checked.
      // @return true if the player has a winning line, false otherwise.
+
      
     bool is_win(Player<char>* player);
 
