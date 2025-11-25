@@ -16,7 +16,7 @@ void display_menu() {
     cout << "========================================\n";
     cout << "1. Numerical Tic-Tac-Toe (Game 9)\n";
     cout << "2. 4x4 Tic-Tac-Toe (Game 7)\n";
-    cout << "3. 5x5 Three-in-a-Row (Game 8)\n";
+    cout << "3. 5x5 Tic-Tac-Toe (Game 8)\n";
     cout << "5. Misere Tic-Tac-Toe\n";
     cout << "0. Exit\n";
     cout << "========================================\n";
