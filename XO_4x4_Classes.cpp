@@ -27,11 +27,16 @@ bool XO_4x4_Board::update_board(Move<char>* move) {
     }
 
 
-    if (board[x][y] == blank_symbol) {
+    if (mark == '.') {
+        board[x][y] = blank_symbol;
+    }
+    else {
         board[x][y] = toupper(mark);
         n_moves++;
         return true;
     }
+    
+
 
     return false;
 }
@@ -110,7 +115,6 @@ vector<Move<char>*> XO_4x4_Board::get_possible_moves(Player<char>* player) {
             }
         }
     }
-
     return moves;
 }
 XO_4x4_UI::XO_4x4_UI() : UI<char>("Welcome to FCAI 4x4 X-O Game", 3) {}
@@ -125,27 +129,40 @@ Player<char>* XO_4x4_UI::create_player(string& name, char symbol, PlayerType typ
 Move<char>* XO_4x4_UI::get_move(Player<char>* player) {
     if (player->get_type() == PlayerType::COMPUTER) {
         XO_4x4_Board* board = dynamic_cast<XO_4x4_Board*>(player->get_board_ptr());
-        if (board) {
-            vector<Move<char>*> possible_moves = board->get_possible_moves(player);
-            if (!possible_moves.empty()) {
-                int random_index = rand() % possible_moves.size();
-                Move<char>* selected_move = possible_moves[random_index];
-                for (int i = 0; i < possible_moves.size(); ++i) {
-                    if (i != random_index) {
-                        delete possible_moves[i];
-                    }
+        char symbol = player->get_symbol();
+        vector<pair<int, int>> my_tokens;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (board->get_board_matrix()[i][j] == symbol) {
+                    my_tokens.push_back(make_pair(i, j));
                 }
-
-                return selected_move;
             }
         }
-        int x, y;
-        do {
-            x = rand() % player->get_board_ptr()->get_rows();
-            y = rand() % player->get_board_ptr()->get_columns();
-        } while (player->get_board_ptr()->get_board_matrix()[x][y] != '.');
-
-        return new Move<char>(x, y, player->get_symbol());
+        if (!my_tokens.empty()) {
+            int token_index = rand() % my_tokens.size();
+            int from_x = my_tokens[token_index].first;
+            int from_y = my_tokens[token_index].second;
+            int directions[4][2] = { {-1,0}, {1,0}, {0,1}, {0,-1} };
+            for (int i = 0; i < 4; i++) {
+                int to_x = from_x + directions[i][0];
+                int to_y = from_y + directions[i][1];
+                if (to_x >= 0 && to_x < 4 && to_y >= 0 && to_y < 4) {
+                    if (board->is_valid_adjacent_move(from_x, from_y, to_x, to_y)) {
+                        Move<char>* remove_old = new Move<char>(from_x, from_y, '.');
+                        board->update_board(remove_old);
+                        delete remove_old;
+                        return new Move<char>(to_x, to_y, symbol);
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (board->get_board_matrix()[i][j] == '.') {
+                    return new Move<char>(i, j, symbol);
+                }
+            }
+        }
     }
     return get_move_with_source(player);
 }
@@ -182,8 +199,12 @@ Move<char>* XO_4x4_UI::get_move_with_source(Player<char>* player) {
             if (board->is_valid_adjacent_move(from_x, from_y, to_x, to_y) &&
                 board->get_board_matrix()[from_x][from_y] == player->get_symbol()) {
 
+                Move<char>* remove_move = new Move<char>(from_x, from_y, '.');
+                board->update_board(remove_move);
+                delete remove_move;
+
+
                 Move<char>* move = new Move<char>(to_x, to_y, player->get_symbol());
-                
                 return move;
             }
             else {
