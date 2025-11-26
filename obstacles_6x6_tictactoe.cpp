@@ -1,4 +1,4 @@
-#include "obstcales_6x6_tictactoe.h"
+#include "obstacles_6x6_tictactoe.h"
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
