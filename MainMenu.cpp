@@ -6,7 +6,9 @@
 #include "XO_4x4_Classes.h"
 #include "XO_5x5_Classes.h"
 #include "MisereTicTacToe.h"
-#include "obstcales_6x6_tictactoe.h"
+#include "obstacles_6x6_tictactoe.h"
+#include "infinity_XO.h"
+
 
 
 using namespace std;
@@ -21,6 +23,7 @@ void display_menu() {
     cout << "3. 5x5 Tic-Tac-Toe (Game 8)\n";
     cout << "4. Misere Tic-Tac-Toe\n";
     cout << "5. obstacles_ 6x6_ tic tac toe \n";
+    cout << "6. infinity_XO_tic tac toe \n";
     cout << "0. Exit\n";
     cout << "========================================\n";
     cout << "Choose a game or exit: ";
@@ -83,6 +86,23 @@ void play_6x6_tictactoe() {
     game_manager.run();
 
 }
+void play_infinity_XO() {
+    cout << "\n=== Starting 3x3 infinity XO Tic-Tac-Toe ===\n";
+    UI<char>* game_ui = new infinity_UI();
+    Board<char>* game_board = new infinity_Board();
+    Player<char>** players = game_ui->setup_players();
+
+    GameManager<char> game_manager(game_board, players, game_ui);
+    game_manager.run();
+
+    delete game_board;
+    delete players[0];
+    delete players[1];
+    delete[] players;
+    delete game_ui;
+
+    cout << "\n*** Game Ended ***\n";
+}
 
 // -------------------- Main --------------------
 int main() {
@@ -104,6 +124,7 @@ int main() {
         case 3: play_5x5_tictactoe(); break;
         case 4: play_misere_tictactoe(); break;
         case 5: play_6x6_tictactoe(); break;
+        case 6: play_infinity_XO(); break;
         case 0:
             cout << "\nThank you for playing! Goodbye!\n";
             running = false;
