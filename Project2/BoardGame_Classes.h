@@ -1,9 +1,3 @@
-// BoardGame_classes.h
-// Version 2.1
-// Date: 25 Nov 2023
-// Author: Mohammad El-Ramly
-// Putpose: Core classes to build board XO-style games (x-o, connect4, etc)
-
 #ifndef _BOARDGAME_CLASSES_H
 #define _BOARDGAME_CLASSES_H
 
@@ -11,10 +5,6 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
-#include <tuple>
-using std::tie;
-
-
 using namespace std;
 
 /////////////////////////////////////////////////////////////
@@ -97,12 +87,6 @@ public:
 
     /** @brief Get number of columns. */
     int get_columns() const { return columns; }
-
-    /** @brief Return content of cell x, y in current board. */
-
-    T get_cell(int x, int y) {
-        return board[x][y];
-    }
 };
 
 //-----------------------------------------------------
@@ -184,7 +168,7 @@ protected:
     /**
      * @brief Ask the user for the player's name.
      */
-    virtual string get_player_name(string player_label) {
+    string get_player_name(string player_label) {
         string name;
         cout << "Enter " << player_label << " name: ";
         getline(cin >> ws, name);
@@ -194,7 +178,7 @@ protected:
     /**
      * @brief Ask the user to choose the player type from a list.
      */
-    virtual PlayerType get_player_type_choice(string player_label, const vector<string>& options) {
+    PlayerType get_player_type_choice(string player_label, const vector<string>& options) {
         cout << "Choose " << player_label << " type:\n";
         for (size_t i = 0; i < options.size(); ++i)
             cout << i + 1 << ". " << options[i] << "\n";
@@ -207,11 +191,6 @@ public:
     /**
      * @brief Construct the UI and display a welcome message.
      */
-    UI(int cell_display_width = 3) : cell_width(cell_display_width) {}
-    
-    /**
-     * @brief Construct the UI and display a welcome message.
-     */
     UI(string message, int cell_display_width)
         : cell_width(cell_display_width) {
         cout << message << endl;
@@ -220,7 +199,7 @@ public:
     virtual ~UI() {}
 
     /** @brief Display any message to the user. */
-    virtual void display_message(string message) { cout << message << "\n"; }
+    void display_message(string message) { cout << message << "\n"; }
 
     /**
      * @brief Ask the user (or AI) to make a move.
@@ -235,13 +214,12 @@ public:
     /**
      * @brief Create a player object based on input name, symbol, and type.
      */
-    virtual Player<T>* create_player(string& name, T symbol, PlayerType type);
+    virtual Player<T>* create_player(string& name, T symbol, PlayerType type) = 0;
 
     /**
      * @brief Display the current board matrix in formatted form.
      */
-
-    virtual void display_board_matrix(const vector<vector<T>>& matrix) const {
+    void display_board_matrix(const vector<vector<T>>& matrix) const {
         if (matrix.empty() || matrix[0].empty()) return;
 
         int rows = matrix.size();
@@ -338,18 +316,6 @@ Player<T>** UI<T>::setup_players() {
     players[1] = create_player(nameO, static_cast<T>('O'), typeO);
 
     return players;
-}
-
-/**
- * @brief Default implementation of creating two players.
- */
-template <typename T>
-Player<T>* UI<T>::create_player(string& name, T symbol, PlayerType type) {
-    // Create player based on type
-    cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
-        << " player: " << name << " (" << symbol << ")\n";
-
-    return new Player<T>(name, symbol, type);
 }
 
 #endif // _BOARDGAME_CLASSES_H

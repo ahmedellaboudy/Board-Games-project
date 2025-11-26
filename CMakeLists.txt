@@ -1,22 +1,24 @@
 cmake_minimum_required(VERSION 3.10)
+project(BoardGames)
 
-project(BoardGame LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 11)
 
-# Use C++17 (you can change this if needed)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Source files
-set(SOURCES
-        main_menu.cpp
-        SUS_classes.cpp
+add_executable(BoardGames
+        MainMenu.cpp
+        BoardGame_Classes.h
+        NumericalTicTacToe.cpp
+        NumericalTicTacToe.h
+        MisereTicTacToe.cpp
+        MisereTicTacToe.h
         XO_Classes.cpp
-        misere_classes.cpp
-        misere_classes.h
+        XO_Classes.h
+        XO_4x4_Classes.cpp
+        XO_4x4_Classes.h
+        XO_5X5_Classes.cpp
+        XO_5X5_Classes.h
 )
 
-# Create the executable
-add_executable(BoardGame ${SOURCES})
-
-# Include current directory so .h files are found
-target_include_directories(BoardGame PRIVATE ${CMAKE_SOURCE_DIR})
+add_executable(XO_Demo
+        XO_Demo.cpp
+        BoardGame_Classes.h
+)
