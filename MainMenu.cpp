@@ -6,7 +6,7 @@
 #include "XO_4x4_Classes.h"
 #include "XO_5x5_Classes.h"
 #include "MisereTicTacToe.h"
-#include "obstacles_6x6_tictactoe.h"
+#include "obstcales_6x6_tictactoe.h"
 
 
 using namespace std;
