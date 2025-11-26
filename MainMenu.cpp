@@ -20,7 +20,7 @@ void display_menu() {
     cout << "2. 4x4 Tic-Tac-Toe (Game 7)\n";
     cout << "3. 5x5 Tic-Tac-Toe (Game 8)\n";
     cout << "4. Misere Tic-Tac-Toe\n";
-    cout << "5. obstacles_ 6x6_ tic tac toe ";
+    cout << "5. obstacles_ 6x6_ tic tac toe \n";
     cout << "0. Exit\n";
     cout << "========================================\n";
     cout << "Choose a game or exit: ";
