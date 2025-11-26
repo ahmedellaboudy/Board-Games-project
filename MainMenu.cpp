@@ -6,7 +6,6 @@
 #include "XO_4x4_Classes.h"
 #include "XO_5x5_Classes.h"
 #include "MisereTicTacToe.h"
-#include "obstcales_6x6_tictactoe.h"
 
 using namespace std;
 
@@ -18,8 +17,7 @@ void display_menu() {
     cout << "1. Numerical Tic-Tac-Toe (Game 9)\n";
     cout << "2. 4x4 Tic-Tac-Toe (Game 7)\n";
     cout << "3. 5x5 Tic-Tac-Toe (Game 8)\n";
-    cout << "4. Misere Tic-Tac-Toe\n";
-    cout << "5. 6x6 Tic-Tac-Toe (Game 10) \n";
+    cout << "5. Misere Tic-Tac-Toe\n";
     cout << "0. Exit\n";
     cout << "========================================\n";
     cout << "Choose a game or exit: ";
@@ -64,7 +62,7 @@ void play_4x4_tictactoe() {
 
 
 void play_5x5_tictactoe() {
-    cout << "\n=== Starting 5x5 Tic-Tac-Toe ===\n";
+    cout << "\n=== Starting 5x5 Three-in-a-Row ===\n";
     XO_5x5_GameManager game_manager;
     game_manager.run();
     cout << "\n*** Game Ended ***\n";
@@ -75,13 +73,6 @@ void play_misere_tictactoe() {
     MisereTicTacToe game;
     game.play();
     cout << "\n*** Game Ended ***\n";
-}
-void play_obstacles_6x6() {
-    cout << "\n=== Starting 6x6 Tic-Tac-Toe ===\n";
-    XO_6x6_GameManager game_manager;
-    game_manager.run();
-    cout << "\n*** Game Ended ***\n";
-
 }
 
 // -------------------- Main --------------------
@@ -99,18 +90,17 @@ int main() {
         cin.ignore(1000, '\n');
 
         switch (choice) {
-        case 1: play_numerical_tictactoe(); break;
-        case 2: play_4x4_tictactoe(); break;
-        case 3: play_5x5_tictactoe(); break;
-        case 4: play_misere_tictactoe(); break;
-        case 5: play_obstacles_6x6(); break;
-        case 0:
-            cout << "\nThank you for playing! Goodbye!\n";
-            running = false;
-            break;
-        default:
-            cout << "\nInvalid choice! Please select 0–5.\n";
-            break;
+            case 1: play_numerical_tictactoe(); break;
+            case 2: play_4x4_tictactoe(); break;
+            case 3: play_5x5_tictactoe(); break;
+            case 4: play_misere_tictactoe(); break;
+            case 0:
+                cout << "\nThank you for playing! Goodbye!\n";
+                running = false;
+                break;
+            default:
+                cout << "\nInvalid choice! Please select 0–5.\n";
+                break;
         }
     }
 

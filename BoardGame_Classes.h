@@ -11,6 +11,10 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
+#include <tuple>
+using std::tie;
+
+
 using namespace std;
 
 /////////////////////////////////////////////////////////////
