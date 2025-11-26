@@ -38,21 +38,12 @@ public:
 
     bool update_board(Move<char>* move);
 
-<<<<<<< HEAD
 
     // @brief Checks if the given player has won the game.
     // @param player Pointer to the player being checked.
     // @return true if the player has a winning line, false otherwise.
 
 
-=======
-    
-     // @brief Checks if the given player has won the game.
-     // @param player Pointer to the player being checked.
-     // @return true if the player has a winning line, false otherwise.
-
-     
->>>>>>> b79aa4e7f8538ff63322fc9df7caef3df8d3468d
     bool is_win(Player<char>* player);
 
 

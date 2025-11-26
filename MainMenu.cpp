@@ -19,8 +19,8 @@ void display_menu() {
     cout << "1. Numerical Tic-Tac-Toe (Game 9)\n";
     cout << "2. 4x4 Tic-Tac-Toe (Game 7)\n";
     cout << "3. 5x5 Tic-Tac-Toe (Game 8)\n";
-    cout << "5. Misere Tic-Tac-Toe\n";
-    cout << "6. obstacles_ 6x6_ tic tac toe ";
+    cout << "4. Misere Tic-Tac-Toe\n";
+    cout << "5. obstacles_ 6x6_ tic tac toe ";
     cout << "0. Exit\n";
     cout << "========================================\n";
     cout << "Choose a game or exit: ";
@@ -103,6 +103,7 @@ int main() {
         case 2: play_4x4_tictactoe(); break;
         case 3: play_5x5_tictactoe(); break;
         case 4: play_misere_tictactoe(); break;
+        case 5: play_6x6_tictactoe(); break;
         case 0:
             cout << "\nThank you for playing! Goodbye!\n";
             running = false;
