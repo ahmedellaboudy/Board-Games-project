@@ -2,23 +2,20 @@ cmake_minimum_required(VERSION 3.10)
 project(BoardGames)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Main executable
 add_executable(BoardGames
         MainMenu.cpp
-        BoardGame_Classes.h
         NumericalTicTacToe.cpp
-        NumericalTicTacToe.h
         MisereTicTacToe.cpp
-        MisereTicTacToe.h
         XO_Classes.cpp
-        XO_Classes.h
         XO_4x4_Classes.cpp
-        XO_4x4_Classes.h
         XO_5X5_Classes.cpp
-        XO_5X5_Classes.h
+        obstcales_6x6_tictactoe.cpp
 )
 
-add_executable(XO_Demo
-        XO_Demo.cpp
-        BoardGame_Classes.h
+# Optional: include header files for IDE navigation
+target_include_directories(BoardGames PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
 )

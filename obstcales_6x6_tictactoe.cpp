@@ -16,6 +16,9 @@ XO_6x6_Board::XO_6x6_Board() : Board(6, 6), obstacles_count(0) {
         }
     }
 
+    //// >>> CHANGE: No obstacles at start
+    // add_random_obstacles();
+    //// <<< CHANGE
 }
 
 void XO_6x6_Board::add_random_obstacles() {
@@ -52,6 +55,8 @@ bool XO_6x6_Board::update_board(Move<char>* move) {
     board[x][y] = symbol;
     n_moves++;
 
+    //// >>> CHANGE: Add obstacles only after both X and O have played
+    if (n_moves >= 2 && n_moves % 2 == 0) {
         add_random_obstacles();
     }
     //// <<< CHANGE
@@ -112,6 +117,7 @@ Move<char>* XO_6x6_UI::get_move(Player<char>* player) {
     if (player->get_type() == PlayerType::HUMAN) {
         cout << "\n" << player->get_name() << ", enter your move x and y (0 to 5): ";
         cin >> x >> y;
+    } else if (player->get_type() == PlayerType::COMPUTER) {
         x = rand() % player->get_board_ptr()->get_rows();
         y = rand() % player->get_board_ptr()->get_columns();
     }
@@ -154,6 +160,7 @@ void XO_6x6_GameManager::run() {
     // Calculate max moves dynamically
     int max_moves = board->get_rows() * board->get_columns() - board->get_obstacles_count();
 
+    //// >>> CHANGE: Added turn count to track when to start obstacles
     int turnCount = 0;
     //// <<< CHANGE
 
@@ -196,7 +203,9 @@ void XO_6x6_GameManager::run() {
     // Check for winner
     if (board->is_win(players[0])) {
         ui->display_message(players[0]->get_name() + " wins!");
+    } else if (board->is_win(players[1])) {
         ui->display_message(players[1]->get_name() + " wins!");
+    } else {
         ui->display_message("It's a draw!");
     }
 }

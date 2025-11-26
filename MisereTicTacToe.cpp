@@ -3,11 +3,9 @@
 #include <cstdlib>
 #include <ctime>
 #include <tuple>
-<<<<<<< HEAD
 using std::tie;   // optional
 
-=======
->>>>>>> b79aa4e7f8538ff63322fc9df7caef3df8d3468d
+
 
 using namespace std;
 
