@@ -1,0 +1,37 @@
+# Build folders
+cmake-build-debug/
+cmake-build-release/
+x64/
+x86/
+Debug/
+Release/
+out/
+build/
+
+# IDE folders
+.idea/
+.vs/
+html/
+
+# Visual Studio files
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.suo
+*.user
+
+# Compiled files
+*.exe
+*.obj
+*.o
+*.dll
+*.lib
+
+# Compressed files
+*.zip
+*.rar
+
+# OS files
+.DS_Store
+Thumbs.db
