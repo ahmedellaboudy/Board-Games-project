@@ -16,7 +16,9 @@ XO_6x6_Board::XO_6x6_Board() : Board(6, 6), obstacles_count(0) {
         }
     }
 
-   
+    //// >>> CHANGE: No obstacles at start
+    // add_random_obstacles();
+    //// <<< CHANGE
 }
 
 void XO_6x6_Board::add_random_obstacles() {
@@ -104,7 +106,7 @@ XO_6x6_UI::~XO_6x6_UI() {}
 
 Player<char>* XO_6x6_UI::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
-        << " player: " << name << " (" << symbol << ")\n";
+         << " player: " << name << " (" << symbol << ")\n";
 
     return new Player<char>(name, symbol, type);
 }
@@ -115,8 +117,7 @@ Move<char>* XO_6x6_UI::get_move(Player<char>* player) {
     if (player->get_type() == PlayerType::HUMAN) {
         cout << "\n" << player->get_name() << ", enter your move x and y (0 to 5): ";
         cin >> x >> y;
-    }
-    else if (player->get_type() == PlayerType::COMPUTER) {
+    } else if (player->get_type() == PlayerType::COMPUTER) {
         x = rand() % player->get_board_ptr()->get_rows();
         y = rand() % player->get_board_ptr()->get_columns();
     }
@@ -202,11 +203,9 @@ void XO_6x6_GameManager::run() {
     // Check for winner
     if (board->is_win(players[0])) {
         ui->display_message(players[0]->get_name() + " wins!");
-    }
-    else if (board->is_win(players[1])) {
+    } else if (board->is_win(players[1])) {
         ui->display_message(players[1]->get_name() + " wins!");
-    }
-    else {
+    } else {
         ui->display_message("It's a draw!");
     }
 }
