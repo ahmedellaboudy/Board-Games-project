@@ -97,6 +97,8 @@ void MisereTicTacToe::play() {
     currentPlayer = 'X';
 
     while (true) {
+
+
         printBoard();
         int row, col;
         string currentName = (currentPlayer == 'X') ? playerXName : playerOName;
@@ -119,9 +121,16 @@ void MisereTicTacToe::play() {
 
         if (threeInRow(currentPlayer)) {
             printBoard();
-            cout << currentName << " made 3-in-a-row and LOSES!\n";
+
+            // Loser is currentPlayer → Winner is the opposite
+            char winnerSymbol = (currentPlayer == 'X') ? 'O' : 'X';
+            string winnerName = (winnerSymbol == 'X') ? playerXName : playerOName;
+
+            cout << "Winner: " << winnerName << " (" << winnerSymbol << ")\n";
             return;
         }
+
+
 
         if (fullBoard()) {
             printBoard();
