@@ -130,68 +130,54 @@ void XO_5x5_Board::display_scores(Player<char>* player1, Player<char>* player2) 
 // XO_5x5_UI Implementation
 //=====================================================
 
-XO_5x5_UI::XO_5x5_UI() : UI<char>("=== 5x5 Three-in-a-Row Game ===", 3) {}
+XO_5x5_UI::XO_5x5_UI() : ValidatedUI<char>("=== 5x5 Three-in-a-Row Game ===", 3) {}
 
 Move<char>* XO_5x5_UI::get_move(Player<char>* player) {
     int x, y;
 
     if (player->get_type() == PlayerType::HUMAN) {
-        cout << player->get_name() << " (" << player->get_symbol() << "), enter your move (row column): ";
-        cin >> x >> y;
-
-        // Input validation
-        while (cin.fail() || x < 0 || x > 4 || y < 0 || y > 4) {
-            cin.clear();
-            cin.ignore(10000, '\n');
-            cout << "Invalid input! Please enter numbers between 0-4: ";
-            cin >> x >> y;
-        }
+        auto pos = get_validated_position(
+            player->get_name() + " (" + player->get_symbol() +
+            "), enter your move (row column): ",
+            5,
+            5,
+            player->get_board_ptr(),
+            ' '
+        );
+        x = pos.first;
+        y = pos.second;
     }
     else {
-        // Computer player - random move
         x = rand() % 5;
         y = rand() % 5;
-        cout << player->get_name() << " (" << player->get_symbol() << ") plays at: " << x << " " << y << endl;
+        cout << player->get_name() << " (" << player->get_symbol()
+             << ") plays at: " << x << " " << y << endl;
     }
 
     return new Move<char>(x, y, player->get_symbol());
-}
-
-Player<char>* XO_5x5_UI::create_player(string& name, char symbol, PlayerType type) {
-    return new Player<char>(name, symbol, type);
 }
 
 Player<char>** XO_5x5_UI::setup_players() {
     Player<char>** players = new Player<char>*[2];
     vector<string> type_options = { "Human", "Computer" };
 
-    string nameX = get_player_name("Player X");
+    string nameX = get_player_name("Player 1 (uses X) ");
     PlayerType typeX = get_player_type_choice("Player X", type_options);
     players[0] = create_player(nameX, 'X', typeX);
 
-    string nameO = get_player_name("Player O");
+    string nameO = get_player_name("Player 2 (uses O)");
     PlayerType typeO = get_player_type_choice("Player O", type_options);
     players[1] = create_player(nameO, 'O', typeO);
 
     return players;
 }
 
-void XO_5x5_UI::display_final_scores(int scoreX, int scoreO, const string& playerX, const string& playerO) {
-    cout << "\n=== Final Results ===" << endl;
-    cout << playerX << " (X): " << scoreX << " three-in-a-rows" << endl;
-    cout << playerO << " (O): " << scoreO << " three-in-a-rows" << endl;
+Player<char>* XO_5x5_UI::create_player(string& name, char symbol, PlayerType type) {
+    cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
+         << " player: " << name << " (" << symbol << ")\n";
 
-    if (scoreX > scoreO) {
-        cout << playerX << " WINS!" << endl;
-    }
-    else if (scoreO > scoreX) {
-        cout << playerO << " WINS!" << endl;
-    }
-    else {
-        cout << "IT'S A DRAW!" << endl;
-    }
+    return new Player<char>(name, symbol, type);
 }
-
 //=====================================================
 // XO_5x5_GameManager Implementation
 //=====================================================
@@ -208,7 +194,6 @@ XO_5x5_GameManager::~XO_5x5_GameManager() {
     delete ui;
     delete players[0];
     delete players[1];
-    delete[] players;
 }
 
 void XO_5x5_GameManager::run() {

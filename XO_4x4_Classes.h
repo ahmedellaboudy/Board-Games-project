@@ -9,6 +9,7 @@
 #define XO_4X4_CLASSES_H
 
 #include "BoardGame_Classes.h"
+#include "ValidatedUI.h"
 using namespace std;
 
 
@@ -93,7 +94,7 @@ public:
 //*
 //* @see UI
 
-class XO_4x4_UI : public UI<char> {
+class XO_4x4_UI : public ValidatedUI<char> {
 public:
 
     //* @brief Constructs an XO_4x4_UI object.
