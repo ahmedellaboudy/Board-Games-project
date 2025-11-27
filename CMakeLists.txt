@@ -12,7 +12,7 @@ add_executable(BoardGames
         XO_Classes.cpp
         XO_4x4_Classes.cpp
         XO_5X5_Classes.cpp
-        obstcales_6x6_tictactoe.cpp
+        obstacles_6x6_tictactoe.cpp
 )
 
 # Optional: include header files for IDE navigation
