@@ -75,7 +75,7 @@ public:
  * @brief User Interface class for the X-O (Tic-Tac-Toe) game.
  *
  * Inherits from the generic `UI<char>` base class and provides
- * X-O–specific functionality for player setup and move input.
+ * X-O specific functionality for player setup and move input.
  *
  * @see UI
  */
@@ -107,7 +107,7 @@ public:
      * @param player Pointer to the player whose move is being requested.
      * @return A pointer to a new `Move<char>` object representing the player's action.
      */
-    virtual Move<char>* get_move(Player<char>* player); 
+    virtual Move<char>* get_move(Player<char>* player);
 };
 
 #endif // XO_CLASSES_H

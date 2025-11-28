@@ -2,6 +2,7 @@
 #define XO_6X6_CLASSES_H
 
 #include "BoardGame_Classes.h"
+#include "ValidatedUI.h"
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
@@ -85,7 +86,7 @@ public:
 // -----------------------------------------------------
 // 6x6 Tic-Tac-Toe UI
 // -----------------------------------------------------
-class XO_6x6_UI : public UI<char> {
+class XO_6x6_UI : public ValidatedUI<char> {
 public:
     XO_6x6_UI();
     ~XO_6x6_UI();

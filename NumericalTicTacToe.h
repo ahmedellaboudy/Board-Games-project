@@ -10,6 +10,7 @@
 #define NUMERICAL_TICTACTOE_CLASSES_H
 
 #include "BoardGame_Classes.h"
+#include "ValidatedUI.h"
 #include <set>
 #include <algorithm>
 
@@ -117,7 +118,7 @@ public:
  * @class Numerical_UI
  * @brief UI class for Numerical Tic-Tac-Toe
  */
-class Numerical_UI : public UI<int> {
+class Numerical_UI : public ValidatedUI<int> {
 public:
     /**
      * @brief Constructor

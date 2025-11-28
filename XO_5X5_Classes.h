@@ -2,6 +2,7 @@
 #define XO_5X5_CLASSES_H
 
 #include "BoardGame_Classes.h"
+#include "ValidatedUI.h"
 #include <vector>
 #include <string>
 
@@ -66,7 +67,7 @@ public:
 /**
  * @brief UI for XO_5x5 game
  */
-class XO_5x5_UI : public UI<char> {
+class XO_5x5_UI : public ValidatedUI<char> {
 public:
     /**
      * @brief Constructor

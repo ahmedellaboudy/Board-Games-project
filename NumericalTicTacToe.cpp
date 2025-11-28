@@ -119,16 +119,16 @@ Numerical_Random_Player::Numerical_Random_Player(int player_number)
 
 
 Numerical_UI::Numerical_UI() 
-    : UI<int>("Welcome to Numerical Tic-Tac-Toe!\n"
+    : ValidatedUI<int>("Welcome to Numerical Tic-Tac-Toe!\n"
               "Player 1 uses odd numbers (1,3,5,7,9)\n"
               "Player 2 uses even numbers (2,4,6,8)\n"
               "Goal: Make three numbers sum to 15 in a row!", 3) {}
 
 Move<int>* Numerical_UI::get_move(Player<int>* player) {
     int x, y, number;
-    
+
     Numerical_Player* num_player = dynamic_cast<Numerical_Player*>(player);
-    
+
     if (player->get_type() == PlayerType::HUMAN) {
         cout << "\n" << player->get_name() << "'s turn\n";
         cout << "Available numbers: ";
@@ -136,21 +136,35 @@ Move<int>* Numerical_UI::get_move(Player<int>* player) {
             cout << num << " ";
         }
         cout << "\n";
-        
-        cout << "Enter row (0-2), column (0-2), and number: ";
-        cin >> x >> y >> number;
-        
-        // Validate number is available
-        if (num_player->get_available_numbers().count(number) == 0) {
-            cout << "Invalid number! Choose from your available numbers.\n";
-            return get_move(player);
+
+        // Get position with validation (0-2 range)
+        auto pos = get_validated_position(
+            "Enter row (0-2) and column (0-2): ",
+            3,  // 0-2 range
+            3,
+            player->get_board_ptr(),
+            0  // empty symbol for int board
+        );
+        x = pos.first;
+        y = pos.second;
+
+        // Validate number
+        while (true) {
+            cout << "Enter number: ";
+            if (cin >> number) {
+                if (num_player->get_available_numbers().count(number) > 0) {
+                    break;
+                }
+                cout << "Invalid number! Choose from your available numbers.\n";
+            } else {
+                cout << "Invalid input! Please enter a number.\n";
+                clear_input_buffer();
+            }
         }
-        
+
     } else if (player->get_type() == PlayerType::COMPUTER) {
-        // Random computer player
         Numerical_Board* board = dynamic_cast<Numerical_Board*>(player->get_board_ptr());
-        
-        // Find empty positions
+
         vector<pair<int, int>> empty_positions;
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
@@ -169,13 +183,12 @@ Move<int>* Numerical_UI::get_move(Player<int>* player) {
         auto it = available.begin();
         advance(it, rand() % available.size());
         number = *it;
-        
-        cout << "\n" << player->get_name() << " plays: " 
+
+        cout << "\n" << player->get_name() << " plays: "
              << number << " at position (" << x << ", " << y << ")\n";
     }
 
     num_player->use_number(number);
-    
     return new Move<int>(x, y, number);
 }
 
