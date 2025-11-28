@@ -1,131 +1,140 @@
 #include "MisereTicTacToe.h"
 #include <iostream>
 #include <cstdlib>
-#include <ctime>
-#include <tuple>
 
 using namespace std;
 
-MisereTicTacToe::MisereTicTacToe() {
-    srand(static_cast<unsigned int>(time(0)));
-    resetBoard();
-    currentPlayer = 'X';
+//--------------------------------------- Misere_Board Implementation
+
+Misere_Board::Misere_Board() : Board(3, 3) {
+    // Initialize all cells with blank_symbol
+    for (auto& row : board)
+        for (auto& cell : row)
+            cell = blank_symbol;
 }
 
-void MisereTicTacToe::resetBoard() {
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
-            board[i][j] = ' ';
-}
+bool Misere_Board::update_board(Move<char>* move) {
+    int x = move->get_x();
+    int y = move->get_y();
+    char mark = move->get_symbol();
 
-void MisereTicTacToe::printBoard() {
-    cout << "\n   0   1   2\n";
-    for (int i = 0; i < 3; i++) {
-        cout << i << "  " << board[i][0] << " | " << board[i][1] << " | " << board[i][2] << "\n";
-        if (i != 2) cout << "  ---+---+---\n";
+    // Validate move position
+    if (x < 0 || x >= rows || y < 0 || y >= columns) {
+        cout << "Invalid position! Please choose between (0-2, 0-2)\n";
+        return false;
     }
-    cout << "\n";
+
+    // Check if cell is empty
+    if (board[x][y] != blank_symbol) {
+        cout << "Cell is already occupied! Choose another cell.\n";
+        return false;
+    }
+
+    // Place the mark
+    board[x][y] = mark;
+    n_moves++;
+    return true;
 }
 
-bool MisereTicTacToe::threeInRow(char p) {
-    for (int i = 0; i < 3; i++)
-        if (board[i][0] == p && board[i][1] == p && board[i][2] == p) return true;
+bool Misere_Board::has_three_in_row(char symbol) {
+    // Check rows
+    for (int i = 0; i < rows; i++) {
+        if (board[i][0] == symbol &&
+            board[i][1] == symbol &&
+            board[i][2] == symbol) {
+            return true;
+        }
+    }
 
-    for (int i = 0; i < 3; i++)
-        if (board[0][i] == p && board[1][i] == p && board[2][i] == p) return true;
+    // Check columns
+    for (int j = 0; j < columns; j++) {
+        if (board[0][j] == symbol &&
+            board[1][j] == symbol &&
+            board[2][j] == symbol) {
+            return true;
+        }
+    }
 
-    if (board[0][0] == p && board[1][1] == p && board[2][2] == p) return true;
-    if (board[0][2] == p && board[1][1] == p && board[2][0] == p) return true;
+    // Check main diagonal (top-left to bottom-right)
+    if (board[0][0] == symbol &&
+        board[1][1] == symbol &&
+        board[2][2] == symbol) {
+        return true;
+    }
+
+    // Check anti-diagonal (top-right to bottom-left)
+    if (board[0][2] == symbol &&
+        board[1][1] == symbol &&
+        board[2][0] == symbol) {
+        return true;
+    }
 
     return false;
 }
 
-bool MisereTicTacToe::fullBoard() {
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
-            if (board[i][j] == ' ') return false;
-    return true;
+bool Misere_Board::is_win(Player<char>* player) {
+    // In Misere: You WIN if your OPPONENT gets three-in-a-row
+    char opponent_symbol = (player->get_symbol() == 'X') ? 'O' : 'X';
+    return has_three_in_row(opponent_symbol);
 }
 
-void MisereTicTacToe::setupPlayers() {
-    int choice;
-
-    // Player X
-    cout << "Enter name for Player 1 (X): ";
-    getline(cin, playerXName);
-    do {
-        cout << "Choose Player 1 type:\n1. Human\n2. Computer\n ";
-        cin >> choice;
-        cin.ignore();
-        if (choice == 1) isPlayerXHuman = true;
-        else if (choice == 2) isPlayerXHuman = false;
-        else cout << "Invalid choice! Try again.\n";
-    } while (choice != 1 && choice != 2);
-
-    // Player O
-    cout << "Enter name for Player 2 (O): ";
-    getline(cin, playerOName);
-    do {
-        cout << "Choose Player 2 type:\n1. Human\n2. Computer\n ";
-        cin >> choice;
-        cin.ignore();
-        if (choice == 1) isPlayerOHuman = true;
-        else if (choice == 2) isPlayerOHuman = false;
-        else cout << "Invalid choice! Try again.\n";
-    } while (choice != 1 && choice != 2);
+bool Misere_Board::is_lose(Player<char>* player) {
+    // In Misere: You LOSE if YOU get three-in-a-row
+    return has_three_in_row(player->get_symbol());
 }
 
-void MisereTicTacToe::makeMove(int row, int col) {
-    board[row][col] = currentPlayer;
+bool Misere_Board::is_draw(Player<char>* player) {
+    // Draw if board is full and nobody got three-in-a-row
+    if (n_moves < 9) return false;
+
+    return !has_three_in_row('X') && !has_three_in_row('O');
 }
 
-pair<int,int> MisereTicTacToe::getComputerMove() {
-    int row, col;
-    do {
-        row = rand() % 3;
-        col = rand() % 3;
-    } while (board[row][col] != ' ');
-    return {row, col};
+bool Misere_Board::game_is_over(Player<char>* player) {
+    // Game ends if someone got three-in-a-row OR board is full
+    return has_three_in_row('X') || has_three_in_row('O') || (n_moves >= 9);
 }
 
-void MisereTicTacToe::play() {
-    setupPlayers();
-    resetBoard();
-    currentPlayer = 'X';
+//--------------------------------------- Misere_UI Implementation
 
-    while (true) {
-        printBoard();
-        int row, col;
-        string currentName = (currentPlayer == 'X') ? playerXName : playerOName;
-        bool isHuman = (currentPlayer == 'X') ? isPlayerXHuman : isPlayerOHuman;
+Misere_UI::Misere_UI() : ValidatedUI<char>(
+    "=== Welcome to Misere Tic-Tac-Toe ===\n"
+    "Rules: AVOID getting three-in-a-row!\n"
+    "If you get three-in-a-row, you LOSE!", 3) {}
 
-        if (isHuman) {
-            cout << currentName << " (" << currentPlayer << "), enter row and column (0-2): ";
-            while (!(cin >> row >> col) || row < 0 || row > 2 || col < 0 || col > 2 || board[row][col] != ' ') {
-                cin.clear();
-                cin.ignore(1000, '\n');
-                cout << "Invalid move! Try again: ";
-            }
-            cin.ignore();
-        } else {
-            cout << currentName << " (" << currentPlayer << ") is making a move...\n";
-            tie(row, col) = getComputerMove();
-        }
+Player<char>* Misere_UI::create_player(string& name, char symbol, PlayerType type) {
+    cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
+         << " player: " << name << " (" << symbol << ")\n";
 
-        makeMove(row, col);
+    return new Player<char>(name, symbol, type);
+}
 
-        if (threeInRow(currentPlayer)) {
-            printBoard();
-            cout << currentName << " made 3-in-a-row and LOSES!\n";
-            return;
-        }
+Move<char>* Misere_UI::get_move(Player<char>* player) {
+    int x, y;
 
-        if (fullBoard()) {
-            printBoard();
-            cout << "Draw! No 3-in-a-row.\n";
-            return;
-        }
-
-        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+    if (player->get_type() == PlayerType::HUMAN) {
+        // Use validated input from ValidatedUI
+        auto pos = get_validated_position(
+            "\n" + player->get_name() + " (" + string(1, player->get_symbol()) +
+            "), enter your move (row column 0-2): ",
+            3,  // max_row (0-2 means pass 3)
+            3,  // max_col (0-2 means pass 3)
+            player->get_board_ptr(),
+            ' '  // empty symbol
+        );
+        x = pos.first;
+        y = pos.second;
     }
+    else if (player->get_type() == PlayerType::COMPUTER) {
+        // Computer makes random valid moves
+        do {
+            x = rand() % 3;
+            y = rand() % 3;
+        } while (player->get_board_ptr()->get_cell(x, y) != ' ');
+
+        cout << "\n" << player->get_name() << " (" << player->get_symbol()
+             << ") plays at: " << x << " " << y << endl;
+    }
+
+    return new Move<char>(x, y, player->get_symbol());
 }

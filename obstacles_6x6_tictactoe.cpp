@@ -100,7 +100,7 @@ int XO_6x6_Board::get_obstacles_count() {
 // XO_6x6_UI Implementation
 // -----------------------------------------------------
 
-XO_6x6_UI::XO_6x6_UI() : UI<char>("Welcome to 6x6 Tic-Tac-Toe with Obstacles!", 3) {}
+XO_6x6_UI::XO_6x6_UI() : ValidatedUI<char>("Welcome to 6x6 Tic-Tac-Toe with Obstacles!", 3) {}
 
 XO_6x6_UI::~XO_6x6_UI() {}
 
@@ -110,13 +110,19 @@ Player<char>* XO_6x6_UI::create_player(string& name, char symbol, PlayerType typ
 
     return new Player<char>(name, symbol, type);
 }
-
 Move<char>* XO_6x6_UI::get_move(Player<char>* player) {
     int x, y;
 
     if (player->get_type() == PlayerType::HUMAN) {
-        cout << "\n" << player->get_name() << ", enter your move x and y (0 to 5): ";
-        cin >> x >> y;
+        auto pos = get_validated_position(
+            "\n" + player->get_name() + ", enter your move x and y (0 to 5): ",
+            6,
+            6,
+            player->get_board_ptr(),
+            ' '
+        );
+        x = pos.first;
+        y = pos.second;
     } else if (player->get_type() == PlayerType::COMPUTER) {
         x = rand() % player->get_board_ptr()->get_rows();
         y = rand() % player->get_board_ptr()->get_columns();

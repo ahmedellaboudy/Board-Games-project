@@ -117,7 +117,7 @@ vector<Move<char>*> XO_4x4_Board::get_possible_moves(Player<char>* player) {
     }
     return moves;
 }
-XO_4x4_UI::XO_4x4_UI() : UI<char>("Welcome to FCAI 4x4 X-O Game", 3) {}
+XO_4x4_UI::XO_4x4_UI() : ValidatedUI<char>("Welcome to 4x4 X-O Game", 3) {}
 
 Player<char>* XO_4x4_UI::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
@@ -172,52 +172,53 @@ Move<char>* XO_4x4_UI::get_move_with_source(Player<char>* player) {
     XO_4x4_Board* board = dynamic_cast<XO_4x4_Board*>(player->get_board_ptr());
 
     if (!board) {
-        cout << "\nPlease enter your move x and y (0 to 3): ";
-        cin >> to_x >> to_y;
-        return new Move<char>(to_x, to_y, player->get_symbol());
+        auto pos = get_validated_position(
+            "\nPlease enter your move x and y (0 to 3): ",
+            4, 4);  // 0-3 range
+        return new Move<char>(pos.first, pos.second, player->get_symbol());
     }
 
     cout << "\n" << player->get_name() << "'s turn (" << player->get_symbol() << ")\n";
+
     while (true) {
-        try {
-            cout << "Enter source coordinates (x y) of your token to move: ";
-            cin >> from_x >> from_y;
-            if (cin.fail()) {
-                cin.clear();
-                cin.ignore(10000, '\n');
-                throw invalid_argument("Invalid input! Please enter numbers only.");
-            }
-            cout << "Enter destination coordinates (x y) to move to: ";
-            cin >> to_x >> to_y;
-            if (cin.fail()) {
-                cin.clear();
-                cin.ignore(10000, '\n');
-                throw invalid_argument("Invalid input! Please enter numbers only.");
-            }
-
-
-            if (board->is_valid_adjacent_move(from_x, from_y, to_x, to_y) &&
-                board->get_board_matrix()[from_x][from_y] == player->get_symbol()) {
-
-                Move<char>* remove_move = new Move<char>(from_x, from_y, '.');
-                board->update_board(remove_move);
-                delete remove_move;
-
-
-                Move<char>* move = new Move<char>(to_x, to_y, player->get_symbol());
-                return move;
-            }
-            else {
-                throw invalid_argument("Invalid move! Please make sure:\n"
-                    "- Source has your token\n"
-                    "- Destination is empty and adjacent (horizontal/vertical)\n"
-                    "- Coordinates are between 0 and 3");
-            }
-        }
-        catch (const exception& e) {
-            cout << "Error: " << e.what() << endl;
-            cout << "Please try again.\n";
+        // Get source position
+        cout << "Enter source coordinates (x y) of your token to move (0-3): ";
+        if (!(cin >> from_x >> from_y)) {
+            cout << "Invalid input! Please enter numbers only.\n";
+            clear_input_buffer();
+            continue;
         }
 
+        if (from_x < 0 || from_x >= 4 || from_y < 0 || from_y >= 4) {
+            cout << "Invalid position! Coordinates must be 0-3.\n";
+            continue;
+        }
+
+        if (board->get_board_matrix()[from_x][from_y] != player->get_symbol()) {
+            cout << "Error: No token of yours at that position!\n";
+            continue;
+        }
+
+        // Get destination position
+        cout << "Enter destination coordinates (x y) to move to (0-3): ";
+        if (!(cin >> to_x >> to_y)) {
+            cout << "Invalid input! Please enter numbers only.\n";
+            clear_input_buffer();
+            continue;
+        }
+
+        if (to_x < 0 || to_x >= 4 || to_y < 0 || to_y >= 4) {
+            cout << "Invalid position! Coordinates must be 0-3.\n";
+            continue;
+        }
+
+        if (board->is_valid_adjacent_move(from_x, from_y, to_x, to_y)) {
+            Move<char>* remove_move = new Move<char>(from_x, from_y, '.');
+            board->update_board(remove_move);
+            delete remove_move;
+            return new Move<char>(to_x, to_y, player->get_symbol());
+        } else {
+            cout << "Invalid move! Destination must be empty and adjacent (horizontal/vertical).\n";
+        }
     }
 }
