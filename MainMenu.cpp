@@ -6,6 +6,7 @@
 #include "XO_4x4_Classes.h"
 #include "XO_5x5_Classes.h"
 #include "MisereTicTacToe.h"
+#include "infinity_XO.h"
 #include "obstacles_6x6_tictactoe.h"
 
 using namespace std;
@@ -20,6 +21,7 @@ void display_menu() {
     cout << "3. 5x5 Tic-Tac-Toe (Game 8)\n";
     cout << "4. Misere Tic-Tac-Toe\n";
     cout << "5. 6x6 Tic-Tac-Toe (Game 10) \n";
+    cout << "6. infinty Tic-Tac-Toe (Game 11) \n";
     cout << "0. Exit\n";
     cout << "========================================\n";
     cout << "Choose a game or exit: ";
@@ -72,10 +74,18 @@ void play_5x5_tictactoe() {
 
 void play_misere_tictactoe() {
     cout << "\n=== Starting Misere Tic-Tac-Toe ===\n";
-    MisereTicTacToe game;
-    game.play();
+
+    UI<char>* game_ui = new MisereTicTacToeUI();
+    Board<char>* game_board = new MisereTicTacToe_board ();
+    Player<char>** players = game_ui->setup_players();
+
+    GameManager<char> game_manager(game_board, players, game_ui);
+    game_manager.run();
+
     cout << "\n*** Game Ended ***\n";
 }
+
+
 void play_obstacles_6x6() {
     cout << "\n=== Starting 6x6 Tic-Tac-Toe ===\n";
     XO_6x6_GameManager game_manager;
@@ -83,6 +93,7 @@ void play_obstacles_6x6() {
     cout << "\n*** Game Ended ***\n";
 
 }
+
 
 // -------------------- Main --------------------
 int main() {
