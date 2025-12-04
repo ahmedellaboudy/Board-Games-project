@@ -10,6 +10,7 @@
 #include "obstacles_6x6_tictactoe.h"
 #include "infinity_XO.h"
 #include "sus.h"
+#include "Diamond_TicTacToe.h"
 
 using namespace std;
 
@@ -25,6 +26,7 @@ void display_menu() {
     cout << "5. Numerical Tic-Tac-Toe \n";
     cout << "6. Obstacles 6x6 Tic-Tac-Toe\n";
     cout << "7. Infinity XO Tic-Tac-Toe\n";
+    cout << "8. Diamond Tic-Tac-Toe \n";
     cout << "0. Exit\n";
     cout << "========================================\n";
     cout << "Choose a game or exit: ";
@@ -202,6 +204,27 @@ void play_infinity_XO() {
 
     cout << "\n*** Game Ended ***\n";
 }
+void play_DiamondTICTACTOE() {
+    cout << "\n=== Starting Diamond Tic-Tac-Toe ===\n";
+    UI<char>* game_ui = new Diamond_UI();
+    Board<char>* game_board = new Diamond_board();
+    Player<char>** players = game_ui->setup_players();
+
+    GameManager<char> game_manager(game_board, players, game_ui);
+    game_manager.run();
+
+    delete game_board;
+    delete players[0];
+    delete players[1];
+    delete[] players;
+    delete game_ui;
+
+    cout << "\n*** Game Ended ***\n";
+
+
+
+
+}
 
 // -------------------- Main --------------------
 int main() {
@@ -233,6 +256,7 @@ int main() {
         case 5: play_numerical_tictactoe(); break;
         case 6: play_6x6_tictactoe(); break;
         case 7: play_infinity_XO(); break;
+        case 8: play_DiamondTICTACTOE(); break;
         case 0:
             cout << "\nThank you for playing! Goodbye!\n";
             running = false;

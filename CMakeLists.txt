@@ -23,6 +23,8 @@ add_executable(BoardGames
         infinity_XO.cpp
         infinity_XO.h
         ValidatedUI.h
+        Diamond_TicTacToe.cpp
+        Diamond_TicTacToe.h
 )
 
 add_executable(XO_Classes.h
