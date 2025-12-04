@@ -25,9 +25,13 @@ add_executable(BoardGames
         ValidatedUI.h
         Diamond_TicTacToe.cpp
         Diamond_TicTacToe.h
+        word.cpp
+        word.h
+
 )
 
 add_executable(XO_Classes.h
         XO_Classes.cpp
         BoardGame_Classes.h
+        cmake-build-debug/dic.txt
 )
