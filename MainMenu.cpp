@@ -11,6 +11,7 @@
 #include "infinity_XO.h"
 #include "sus.h"
 #include "Diamond_TicTacToe.h"
+#include "Word.h"
 
 using namespace std;
 
@@ -27,6 +28,7 @@ void display_menu() {
     cout << "6. Obstacles 6x6 Tic-Tac-Toe\n";
     cout << "7. Infinity XO Tic-Tac-Toe\n";
     cout << "8. Diamond Tic-Tac-Toe \n";
+    cout << "9. Word Tic-Tac-Toe\n";
     cout << "0. Exit\n";
     cout << "========================================\n";
     cout << "Choose a game or exit: ";
@@ -224,6 +226,19 @@ void play_DiamondTICTACTOE() {
 
 
 
+} 
+void play_word_XO() {
+    cout << "\n=== Starting Word Tic-Tac-Toe ===\n";
+
+    WordUI* ui = new WordUI();
+    WordBoard* board = new WordBoard();
+
+    Player<char>** players = ui->setup_players();
+
+    WordGameManager game_manager(board, players, ui);
+    game_manager.run();
+
+    cout << "\n*** Game Ended ***\n";
 }
 
 // -------------------- Main --------------------
@@ -257,6 +272,7 @@ int main() {
         case 6: play_6x6_tictactoe(); break;
         case 7: play_infinity_XO(); break;
         case 8: play_DiamondTICTACTOE(); break;
+        case 9 :play_word_XO(); break;
         case 0:
             cout << "\nThank you for playing! Goodbye!\n";
             running = false;
