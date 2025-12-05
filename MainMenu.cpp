@@ -12,6 +12,7 @@
 #include "sus.h"
 #include "Diamond_TicTacToe.h"
 #include "Word.h"
+#include "Pyramid_XO_Classes.h"
 
 using namespace std;
 
@@ -29,6 +30,7 @@ void display_menu() {
     cout << "7. Infinity XO Tic-Tac-Toe\n";
     cout << "8. Diamond Tic-Tac-Toe \n";
     cout << "9. Word Tic-Tac-Toe\n";
+    cout << "10.pyramid Tic-Tac-Toe\n";
     cout << "0. Exit\n";
     cout << "========================================\n";
     cout << "Choose a game or exit: ";
@@ -240,6 +242,23 @@ void play_word_XO() {
 
     cout << "\n*** Game Ended ***\n";
 }
+void play_pyramid_XO() {
+    cout << "\n=== Starting pyramid Tic-Tac-Toe ===\n";
+    UI<char>* game_ui = new Pyramid_UI();
+    Board<char>* game_board = new Pyramid_Board();
+    Player<char>** players = game_ui->setup_players();
+
+    GameManager<char> game_manager(game_board, players, game_ui);
+    game_manager.run();
+
+    delete game_board;
+    delete players[0];
+    delete players[1];
+    delete[] players;
+    delete game_ui;
+
+    cout << "\n*** Game Ended ***\n";
+}
 
 // -------------------- Main --------------------
 int main() {
@@ -273,6 +292,7 @@ int main() {
         case 7: play_infinity_XO(); break;
         case 8: play_DiamondTICTACTOE(); break;
         case 9 :play_word_XO(); break;
+        case 10:play_pyramid_XO(); break;
         case 0:
             cout << "\nThank you for playing! Goodbye!\n";
             running = false;
