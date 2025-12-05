@@ -5,33 +5,28 @@ set(CMAKE_CXX_STANDARD 11)
 
 add_executable(BoardGames
         MainMenu.cpp
-        BoardGame_Classes.h
+
         NumericalTicTacToe.cpp
-        NumericalTicTacToe.h
         MisereTicTacToe.cpp
-        MisereTicTacToe.h
         XO_Classes.cpp
-        XO_Classes.h
         XO_4x4_Classes.cpp
-        XO_4x4_Classes.h
         XO_5X5_Classes.cpp
-        XO_5X5_Classes.h
-        sus.h
         sus.cpp
         obstacles_6x6_tictactoe.cpp
-        obstacles_6x6_tictactoe.h
         infinity_XO.cpp
+        Diamond_TicTacToe.cpp
+        word.cpp
+
+        BoardGame_Classes.h
+        NumericalTicTacToe.h
+        MisereTicTacToe.h
+        XO_Classes.h
+        XO_4x4_Classes.h
+        XO_5X5_Classes.h
+        sus.h
+        obstacles_6x6_tictactoe.h
         infinity_XO.h
         ValidatedUI.h
-        Diamond_TicTacToe.cpp
         Diamond_TicTacToe.h
-        word.cpp
         word.h
-
-)
-
-add_executable(XO_Classes.h
-        XO_Classes.cpp
-        BoardGame_Classes.h
-        cmake-build-debug/dic.txt
 )

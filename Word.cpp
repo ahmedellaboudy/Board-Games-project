@@ -204,7 +204,7 @@ WordComputerPlayer::WordComputerPlayer(char symbol)
 
 
 WordUI::WordUI()
-    : UI<char>("Welcome to Word Tic-Tac-Toe!\n"
+    : ValidatedUI<char>("Welcome to Word Tic-Tac-Toe!\n"
         "Form a valid 3-letter word horizontally, vertically, or diagonally to win!", 3) {
 }
 
@@ -240,18 +240,32 @@ Move<char>* WordUI::get_move(Player<char>* player) {
 
     // Human player
     cout << player->get_name() << "'s turn\n";
-    int x, y;
+
+    auto pos = get_validated_position(
+    "Enter row and column (0-2, separated by space): ",
+    3,
+    3,
+    player->get_board_ptr(),
+    ' '
+);
+    int x = pos.first;
+    int y = pos.second;
+
     char letter;
-
-    cout << "Enter row (0-2): ";
-    cin >> x;
-
-    cout << "Enter column (0-2): ";
-    cin >> y;
-
-    cout << "Enter a letter: ";
-    cin >> letter;
-
+    while (true) {
+        cout << "Enter a letter (A-Z): ";
+        if (cin >> letter) {
+            letter = toupper(letter);
+            if (isalpha(letter)) {
+                clear_input_buffer();
+                break;
+            }
+            cout << "Invalid! Please enter a letter from A to Z.\n";
+        } else {
+            cout << "Invalid input! Please enter a letter.\n";
+            clear_input_buffer();
+        }
+    }
     return new Move<char>(x, y, letter);
 }
 

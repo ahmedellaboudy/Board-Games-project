@@ -2,6 +2,7 @@
 #define _WORD_H
 
 #include "BoardGame_Classes.h"
+#include "ValidatedUI.h"
 #include <fstream>
 #include <algorithm>
 #include <cctype>
@@ -79,7 +80,7 @@ public:
 /**
  * @brief UI class for Word Tic-Tac-Toe game
  */
-class WordUI : public UI<char> {
+class WordUI : public ValidatedUI<char> {
 public:
     WordUI();
     Move<char>* get_move(Player<char>* player) override;

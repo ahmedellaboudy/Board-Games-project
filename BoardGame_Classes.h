@@ -11,10 +11,6 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
-#include <tuple>
-using std::tie;
-
-
 using namespace std;
 
 /////////////////////////////////////////////////////////////
@@ -142,7 +138,7 @@ class Player {
 protected:
     string name;         ///< Player name
     PlayerType type;     ///< Player type (e.g., HUMAN or COMPUTER)
-    T symbol;            ///< Player’s symbol on board
+    T symbol;            ///< Player?s symbol on board
     Board<T>* boardPtr;  ///< Pointer to the game board
 
 public:
