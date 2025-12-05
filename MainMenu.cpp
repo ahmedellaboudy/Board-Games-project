@@ -13,8 +13,9 @@
 #include "Diamond_TicTacToe.h"
 #include "Memory_TicTacToe.h"
 #include "Word.h"
-#include "Pyramid_XO_Classes.h"
+#include "pyramid_XO_Classes.h"
 #include "Memory_TicTacToe.h"
+#include "ultimate_XO_Classes.h"
 
 using namespace std;
 
@@ -34,6 +35,7 @@ void display_menu() {
     cout << "9. Word Tic-Tac-Toe\n";
     cout << "10.pyramid Tic-Tac-Toe\n";
     cout << "11. Memory Tic-Tac-Toe\n";
+    cout << "12. Ultimate Tic-Tac-Toe\n";
     cout << "0. Exit\n";
     cout << "========================================\n";
     cout << "Choose a game or exit: ";
@@ -317,6 +319,23 @@ void play_memoryTicTacToe() {
 
     cout << "\n*** Memory Game Ended ***\n";
 }
+void play_ultimate_tictactoe() {
+    cout << "\n=== Starting ultimate Tic-Tac-Toe ===\n";
+    UI<char>* game_ui = new Ultimate_XO_UI();
+    Board<char>* game_board = new Ultimate_XO_Board();
+    Player<char>** players = game_ui->setup_players();
+
+    GameManager<char> game_manager(game_board, players, game_ui);
+    game_manager.run();
+
+    delete game_board;
+    delete players[0];
+    delete players[1];
+    delete[] players;
+    delete game_ui;
+
+    cout << "\n*** Game Ended ***\n";
+}
 
 
 // -------------------- Main --------------------
@@ -353,6 +372,7 @@ int main() {
         case 9 :play_word_XO(); break;
         case 10:play_pyramid_XO(); break;
         case 11:play_memoryTicTacToe(); break;
+        case 12:play_ultimate_tictactoe(); break;
         case 0:
             cout << "\nThank you for playing! Goodbye!\n";
             running = false;
