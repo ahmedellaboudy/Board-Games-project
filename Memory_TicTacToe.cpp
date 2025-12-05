@@ -102,9 +102,9 @@ bool Memory_Board::game_is_over(Player<char>* player) {
 //--------------------------------------- Misere_UI Implementation
 
 Memory_UI::Memory_UI() : ValidatedUI<char>(
-    "=== Welcome to Misere Tic-Tac-Toe ===\n"
-    "Rules: AVOID getting three-in-a-row!\n"
-    "If you get three-in-a-row, you LOSE!", 3) {}
+    "=== Welcome to MEMORY Tic-Tac-Toe ===\n"
+    "If you get three-in-a-row, you WIN!\n"
+     "=== Remember the positions! ===\n", 3) {}
 
 Player<char>* Memory_UI::create_player(string& name, char symbol, PlayerType type) {
     cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
