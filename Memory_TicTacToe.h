@@ -1,12 +1,12 @@
 /**
  * @file MisereTicTacToe.h
- * @brief Misere Tic-Tac-Toe game implementation (Game 5)
+
  * Also known as Inverse Tic-Tac-Toe - the goal is to AVOID getting three-in-a-row!
  * A player LOSES if they complete a line of three marks.
  */
 
-#ifndef MISERE_TICTACTOE_H
-#define MISERE_TICTACTOE_H
+#ifndef MEMORY_TICTACTOE_H
+#define MEMORY_TICTACTOE_H
 
 #include "BoardGame_Classes.h"
 #include "ValidatedUI.h"
@@ -15,11 +15,24 @@
 using namespace std;
 
 /**
- * @class Misere_Board
- * @brief Board class for Misere Tic-Tac-Toe
+ * @class Memory_Board
+
  *
  * In this variant, getting three-in-a-row means you LOSE!
  */
+class Fake_Board : public Board<char> {
+
+    char blank_symbol = ' ';
+public:
+
+    bool update_board(Move<char>* move) override { return true; } // dummy
+    bool is_win(Player<char>*) override { return false; }
+    bool is_lose(Player<char>*) override { return false; }
+    bool is_draw(Player<char>*) override { return false; }
+    bool game_is_over(Player<char>*) override { return false; }
+    Fake_Board();
+    void display_board() ;
+};
 class Memory_Board : public Board<char> {
 private:
     char blank_symbol = ' '; ///< Character for empty cell
@@ -36,6 +49,7 @@ public:
      * @brief Constructor initializing 3x3 board
      */
     Memory_Board();
+    void display_board() ;
 
     /**
      * @brief Update board with a move
@@ -46,7 +60,7 @@ public:
 
     /**
      * @brief Check if player has WON
-     * In Misere, you win if your OPPONENT gets three-in-a-row
+     * In Memory, you win if your OPPONENT gets three-in-a-row
      * @param player The player to check
      * @return true if opponent has three-in-a-row
      */
@@ -54,7 +68,6 @@ public:
 
     /**
      * @brief Check if player has LOST
-     * In Misere, you lose if YOU get three-in-a-row
      * @param player The player to check
      * @return true if player has three-in-a-row
      */
@@ -77,7 +90,7 @@ public:
 };
 
 /**
- * @class Misere_UI
+ * @class Memory_UI
  * @brief UI class for Misere Tic-Tac-Toe
  */
 class Memory_UI : public ValidatedUI<char> {
@@ -109,4 +122,4 @@ public:
     Move<char>* get_move(Player<char>* player) override;
 };
 
-#endif // MISERE_TICTACTOE_H
+#endif

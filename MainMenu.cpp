@@ -11,8 +11,10 @@
 #include "infinity_XO.h"
 #include "sus.h"
 #include "Diamond_TicTacToe.h"
+#include "Memory_TicTacToe.h"
 #include "Word.h"
 #include "Pyramid_XO_Classes.h"
+#include "Memory_TicTacToe.h"
 
 using namespace std;
 
@@ -31,6 +33,7 @@ void display_menu() {
     cout << "8. Diamond Tic-Tac-Toe \n";
     cout << "9. Word Tic-Tac-Toe\n";
     cout << "10.pyramid Tic-Tac-Toe\n";
+    cout << "11. Memory Tic-Tac-Toe\n";
     cout << "0. Exit\n";
     cout << "========================================\n";
     cout << "Choose a game or exit: ";
@@ -259,6 +262,62 @@ void play_pyramid_XO() {
 
     cout << "\n*** Game Ended ***\n";
 }
+void play_memoryTicTacToe() {
+    cout << "\n=== Starting Memory Tic-Tac-Toe ===\n";
+
+    Memory_UI* game_ui = new Memory_UI();
+    Memory_Board* game_board = new Memory_Board();
+    Fake_Board* fake_board = new Fake_Board();
+
+    Player<char>** players = game_ui->setup_players();
+
+    // Set real board for validation
+    players[0]->set_board_ptr(game_board);
+    players[1]->set_board_ptr(game_board);
+    game_ui->display_board_matrix(fake_board->get_board_matrix());
+
+    Player<char>* currentPlayer = players[0];
+    int turn = 0;
+
+    while (!game_board->game_is_over(currentPlayer)) {
+        currentPlayer = players[turn % 2];
+
+        Move<char>* move = game_ui->get_move(currentPlayer);
+
+        while (!game_board->update_board(move)) {
+            cout << "Invalid move! Try again.\n";
+            delete move;
+            move = game_ui->get_move(currentPlayer);
+        }
+
+        delete move;
+        game_ui->display_board_matrix(game_board->get_board_matrix());
+        if (game_board->game_is_over(currentPlayer)) {
+            break;
+        }
+        turn++;
+    }
+    game_ui->display_board_matrix(game_board->get_board_matrix());
+
+    // Determine winner
+    if (game_board->is_win(players[0])) {
+        game_ui->display_message(players[0]->get_name() + " wins!");
+    } else if (game_board->is_win(players[1])) {
+        game_ui->display_message(players[1]->get_name() + " wins!");
+    } else {
+        game_ui->display_message("It's a draw!");
+    }
+
+    delete game_board;
+    delete fake_board;
+    delete players[0];
+    delete players[1];
+    delete[] players;
+    delete game_ui;
+
+    cout << "\n*** Memory Game Ended ***\n";
+}
+
 
 // -------------------- Main --------------------
 int main() {
@@ -293,6 +352,7 @@ int main() {
         case 8: play_DiamondTICTACTOE(); break;
         case 9 :play_word_XO(); break;
         case 10:play_pyramid_XO(); break;
+        case 11:play_memoryTicTacToe(); break;
         case 0:
             cout << "\nThank you for playing! Goodbye!\n";
             running = false;

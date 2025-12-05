@@ -29,4 +29,7 @@ add_executable(BoardGames
         ValidatedUI.h
         Diamond_TicTacToe.h
         word.h
+        Memory_TicTacToe.cpp
+        Memory_TicTacToe.h
+        pyramid_XO_Classes.cpp
 )

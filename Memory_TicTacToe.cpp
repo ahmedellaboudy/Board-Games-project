@@ -11,7 +11,13 @@ Memory_Board::Memory_Board() : Board(3, 3) {
         for (auto& cell : row)
             cell = blank_symbol;
 }
+Fake_Board::Fake_Board(): Board(3, 3) {
+    // Initialize all cells with blank_symbol
+    for (auto& row : board)
+        for (auto& cell : row)
+            cell = blank_symbol;
 
+}
 bool Memory_Board::update_board(Move<char>* move) {
     int x = move->get_x();
     int y = move->get_y();
@@ -34,6 +40,7 @@ bool Memory_Board::update_board(Move<char>* move) {
     n_moves++;
     return true;
 }
+
 
 bool Memory_Board::has_three_in_row(char symbol) {
     // Check rows
@@ -72,14 +79,12 @@ bool Memory_Board::has_three_in_row(char symbol) {
 }
 
 bool Memory_Board::is_win(Player<char>* player) {
-    // In Misere: You WIN if your OPPONENT gets three-in-a-row
-    char opponent_symbol = (player->get_symbol() == 'X') ? 'O' : 'X';
-    return has_three_in_row(opponent_symbol);
+   return has_three_in_row(player->get_symbol());
 }
 
 bool Memory_Board::is_lose(Player<char>* player) {
-    // In Misere: You LOSE if YOU get three-in-a-row
-    return has_three_in_row(player->get_symbol());
+     char opponent_symbol = (player->get_symbol() == 'X') ? 'O' : 'X';
+    return has_three_in_row(opponent_symbol);
 }
 
 bool Memory_Board::is_draw(Player<char>* player) {
