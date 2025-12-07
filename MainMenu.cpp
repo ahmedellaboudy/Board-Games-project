@@ -276,11 +276,15 @@ void play_memoryTicTacToe() {
     // Set real board for validation
     players[0]->set_board_ptr(game_board);
     players[1]->set_board_ptr(game_board);
+
+    // Display fake board initially (all blank)
+    cout << "\n=== Game Starting - Remember the positions! ===\n";
     game_ui->display_board_matrix(fake_board->get_board_matrix());
 
     Player<char>* currentPlayer = players[0];
     int turn = 0;
 
+    // DURING GAME: Show fake board (always blank)
     while (!game_board->game_is_over(currentPlayer)) {
         currentPlayer = players[turn % 2];
 
@@ -293,13 +297,18 @@ void play_memoryTicTacToe() {
         }
 
         delete move;
-        game_ui->display_board_matrix(game_board->get_board_matrix());
+
+        // Show fake board (always blank) - memory challenge!
+        game_ui->display_board_matrix(fake_board->get_board_matrix());
+
         if (game_board->game_is_over(currentPlayer)) {
             break;
         }
         turn++;
     }
-    game_ui->display_board_matrix(game_board->get_board_matrix());
+
+    cout << "\n=== Game Over! Revealing the board ===\n";
+    game_ui->display_board_matrix(game_board->get_board_matrix()); 
 
     // Determine winner
     if (game_board->is_win(players[0])) {
