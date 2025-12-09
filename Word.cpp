@@ -37,7 +37,7 @@ void WordBoard::load_dictionary(const string& filename) {
         exit(1);
     }
 
-    cout << "✓ Loaded " << dictionary.size() << " words from dictionary.\n";
+    cout << "Loaded " << dictionary.size() << " words from dictionary.\n";
 }
 
 bool WordBoard::is_valid_word(const string& word) const {

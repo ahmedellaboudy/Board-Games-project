@@ -1,22 +1,20 @@
+#include "ultimate_XO_Classes.h"
 #include <iostream>
 #include <iomanip>
-#include <cctype>
-#include <vector>
-#include <memory>
-#include "ultimate_XO_Classes.h"
-#include "XO_Classes.h"
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
-//--------------------------------------- Ultimate_Tic_Tac_Toe_Board Implementation
+// ============ Ultimate_XO_Board Implementation ============
 
-Ultimate_XO_Board::Ultimate_XO_Board()
-    : Board(3, 3), lastMoveBoardRow(-1), lastMoveBoardCol(-1) {
+Ultimate_XO_Board::Ultimate_XO_Board() 
+    : Board(3, 3) {
 
-    // Initialize main board
-    mainBoard = vector<vector<char>>(3, vector<char>(3, blank_symbol));
+    // Initialize main board (tracks which sub-boards are won)
+    mainBoard = vector<vector<char>>(3, vector<char>(3, ' '));
 
-    // Initialize sub-boards
+    // Create 9 sub-boards
     subBoards.resize(3);
     for (int i = 0; i < 3; i++) {
         subBoards[i].resize(3);
@@ -27,7 +25,6 @@ Ultimate_XO_Board::Ultimate_XO_Board()
 }
 
 Ultimate_XO_Board::~Ultimate_XO_Board() {
-    // Clean up sub-boards
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             delete subBoards[i][j];
@@ -36,104 +33,90 @@ Ultimate_XO_Board::~Ultimate_XO_Board() {
 }
 
 bool Ultimate_XO_Board::update_board(Move<char>* move) {
-    int boardRow, boardCol, cellRow, cellCol;
+    int boardRow = move->get_x();
+    int boardCol = move->get_y();
 
-    // Decode the move coordinates
-    // Assuming move->get_x() encodes boardRow * 3 + cellRow
-    // and move->get_y() encodes boardCol * 3 + cellCol
-    int encodedX = move->get_x();
-    int encodedY = move->get_y();
+    // Decode: x = boardRow*10 + cellRow, y = boardCol*10 + cellCol
+    int cellRow = boardRow % 10;
+    boardRow = boardRow / 10;
+    int cellCol = boardCol % 10;
+    boardCol = boardCol / 10;
 
-    boardRow = encodedX / 3;
-    cellRow = encodedX % 3;
-    boardCol = encodedY / 3;
-    cellCol = encodedY % 3;
-
-    char mark = move->get_symbol();
-
-    // Validate move
-    if (boardRow < 0 || boardRow >= 3 || boardCol < 0 || boardCol >= 3 ||
-        cellRow < 0 || cellRow >= 3 || cellCol < 0 || cellCol >= 3) {
+    // Validate coordinates
+    if (boardRow < 0 || boardRow > 2 || boardCol < 0 || boardCol > 2 ||
+        cellRow < 0 || cellRow > 2 || cellCol < 0 || cellCol > 2) {
+        cout << "Invalid move coordinates!\n";
         return false;
     }
 
-    // Check if this board is available (not already won)
-    if (mainBoard[boardRow][boardCol] != blank_symbol) {
+    // Check if this sub-board is already won
+    if (mainBoard[boardRow][boardCol] != ' ') {
+        cout << "This board has already been won!\n";
         return false;
     }
 
-    // Check if player must play in specific board (based on last move)
-    if (lastMoveBoardRow != -1 && lastMoveBoardCol != -1) {
-        if (lastMoveBoardRow != boardRow || lastMoveBoardCol != boardCol) {
-            // Check if the required board is still playable
-            if (mainBoard[lastMoveBoardRow][lastMoveBoardCol] == blank_symbol) {
-                return false;  // Must play in the designated board
-            }
-        }
+    // Try to make move in sub-board
+    Move<char> subMove(cellRow, cellCol, move->get_symbol());
+    if (!subBoards[boardRow][boardCol]->update_board(&subMove)) {
+        return false;
     }
 
-    // Create a move for the sub-board
-    Move<char> subMove(cellRow, cellCol, mark);
+    // Update successful
+    n_moves++;
 
-    // Update the sub-board
-    bool success = subBoards[boardRow][boardCol]->update_board(&subMove);
-
-    if (success) {
-        // Update last move coordinates
-        lastMoveBoardRow = cellRow;
-        lastMoveBoardCol = cellCol;
-
-        // Check if this sub-board is now won
-        char winner = check_sub_board_win(boardRow, boardCol);
-        if (winner != blank_symbol && winner != tie_symbol) {
-            mainBoard[boardRow][boardCol] = winner;
-        }
-
-        n_moves++;
-        return true;
+    // Check if this sub-board is now won
+    char winner = check_sub_board_winner(boardRow, boardCol);
+    if (winner != ' ') {
+        mainBoard[boardRow][boardCol] = winner;
     }
 
-    return false;
+    return true;
 }
 
-char Ultimate_XO_Board::check_sub_board_win(int row, int col) {
-    X_O_Board* board = subBoards[row][col];
+char Ultimate_XO_Board::check_sub_board_winner(int boardRow, int boardCol) {
+    X_O_Board* board = subBoards[boardRow][boardCol];
 
-    // Create temporary players for checking
+    // Create dummy players to check win conditions
     Player<char> xPlayer("X", 'X', PlayerType::HUMAN);
     Player<char> oPlayer("O", 'O', PlayerType::HUMAN);
+    xPlayer.set_board_ptr(board);
+    oPlayer.set_board_ptr(board);
 
     if (board->is_win(&xPlayer)) {
         return 'X';
     }
-    else if (board->is_win(&oPlayer)) {
+    if (board->is_win(&oPlayer)) {
         return 'O';
     }
-    else if (board->game_is_over(&xPlayer)) {  // Check for draw
-        return tie_symbol;
+    if (board->is_draw(&xPlayer)) {
+        return 'T';  // Tie
     }
 
-    return blank_symbol;
+    return ' ';  // Still playing
 }
 
 bool Ultimate_XO_Board::is_win(Player<char>* player) {
-    const char sym = player->get_symbol();
+    char sym = player->get_symbol();
 
-    auto all_equal = [&](char a, char b, char c) {
-        return a == b && b == c && a == sym;
-        };
-
-    // Check rows and columns of main board
-    for (int i = 0; i < 3; ++i) {
-        if (all_equal(mainBoard[i][0], mainBoard[i][1], mainBoard[i][2]) ||
-            all_equal(mainBoard[0][i], mainBoard[1][i], mainBoard[2][i])) {
+    // Check rows
+    for (int i = 0; i < 3; i++) {
+        if (mainBoard[i][0] == sym && mainBoard[i][1] == sym && mainBoard[i][2] == sym) {
             return true;
         }
     }
 
-    // Check diagonals of main board
-    if (all_equal(mainBoard[0][0], mainBoard[1][1], mainBoard[2][2]) ||
-        all_equal(mainBoard[0][2], mainBoard[1][1], mainBoard[2][0])) {
+    // Check columns
+    for (int j = 0; j < 3; j++) {
+        if (mainBoard[0][j] == sym && mainBoard[1][j] == sym && mainBoard[2][j] == sym) {
+            return true;
+        }
+    }
+
+    // Check diagonals
+    if (mainBoard[0][0] == sym && mainBoard[1][1] == sym && mainBoard[2][2] == sym) {
+        return true;
+    }
+    if (mainBoard[0][2] == sym && mainBoard[1][1] == sym && mainBoard[2][0] == sym) {
         return true;
     }
 
@@ -141,211 +124,211 @@ bool Ultimate_XO_Board::is_win(Player<char>* player) {
 }
 
 bool Ultimate_XO_Board::is_draw(Player<char>* player) {
-    // Check if all main board cells are filled (with either X, O, or T)
+    // Check if all sub-boards are complete
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
-            if (mainBoard[i][j] == blank_symbol) {
-                return false;
+            if (mainBoard[i][j] == ' ') {
+                return false;  // Still have available boards
             }
         }
     }
 
-    // If all filled and no winner, it's a draw
-    return !is_win(player);
+    // All boards complete - check if anyone won
+    Player<char> xPlayer("X", 'X', PlayerType::HUMAN);
+    Player<char> oPlayer("O", 'O', PlayerType::HUMAN);
+
+    return !is_win(&xPlayer) && !is_win(&oPlayer);
 }
 
 bool Ultimate_XO_Board::game_is_over(Player<char>* player) {
     return is_win(player) || is_draw(player);
 }
 
-vector<pair<int, int>> Ultimate_XO_Board::get_available_boards() {
-    vector<pair<int, int>> available;
-
-    if (lastMoveBoardRow == -1 || lastMoveBoardCol == -1) {
-        // First move or board is won - player can choose any available board
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (mainBoard[i][j] == blank_symbol) {
-                    available.push_back({ i, j });
-                }
-            }
-        }
+bool Ultimate_XO_Board::is_board_available(int boardRow, int boardCol) {
+    if (boardRow < 0 || boardRow > 2 || boardCol < 0 || boardCol > 2) {
+        return false;
     }
-    else {
-        // Player must play in the board corresponding to last move's cell
-        if (mainBoard[lastMoveBoardRow][lastMoveBoardCol] == blank_symbol) {
-            available.push_back({ lastMoveBoardRow, lastMoveBoardCol });
-        }
-        else {
-            // If that board is won/tied, player can choose any available board
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    if (mainBoard[i][j] == blank_symbol) {
-                        available.push_back({ i, j });
-                    }
-                }
-            }
-        }
-    }
-
-    return available;
+    return mainBoard[boardRow][boardCol] == ' ';
 }
 
-void Ultimate_XO_Board::display_board() const {
-    cout << "\nULTIMATE TIC TAC TOE BOARD:\n";
-    cout << "============================\n\n";
-
-    // Display column headers for main board
-    cout << "     ";
-    for (int mainCol = 0; mainCol < 3; mainCol++) {
-        cout << " Board " << mainCol << "       ";
+X_O_Board* Ultimate_XO_Board::get_sub_board(int row, int col) const {
+    if (row >= 0 && row < 3 && col >= 0 && col < 3) {
+        return subBoards[row][col];
     }
-    cout << "\n";
-
-    for (int mainRow = 0; mainRow < 3; mainRow++) {
-        // Display 3 rows of each sub-board
-        for (int subRow = 0; subRow < 3; subRow++) {
-            if (subRow == 1) {
-                cout << "B" << mainRow << " ";
-            }
-            else {
-                cout << "   ";
-            }
-
-            for (int mainCol = 0; mainCol < 3; mainCol++) {
-                // Display one row of the sub-board
-                cout << " ";
-                for (int subCol = 0; subCol < 3; subCol++) {
-                    // Get the cell from sub-board
-                    vector<vector<char>> subBoardState = subBoards[mainRow][mainCol]->display_board();
-                    char cell = subBoardState[subRow][subCol];
-
-                    // If sub-board is won, show the winner
-                    if (mainBoard[mainRow][mainCol] != blank_symbol && subRow == 1 && subCol == 1) {
-                        cout << " " << mainBoard[mainRow][mainCol] << " ";
-                    }
-                    else {
-                        cout << " " << cell << " ";
-                    }
-
-                    if (subCol < 2) cout << "|";
-                }
-                cout << "  ";
-            }
-            cout << "\n";
-
-            if (subRow < 2) {
-                cout << "     ";
-                for (int mainCol = 0; mainCol < 3; mainCol++) {
-                    cout << "---+---+---  ";
-                }
-                cout << "\n";
-            }
-        }
-
-        if (mainRow < 2) {
-            cout << "     ";
-            for (int mainCol = 0; mainCol < 3; mainCol++) {
-                cout << "           =====";
-            }
-            cout << "\n";
-        }
-    }
-
-    // Display main board status
-    cout << "\nMAIN BOARD STATUS:\n";
-    cout << "===============\n";
-    for (int i = 0; i < 3; i++) {
-        cout << " ";
-        for (int j = 0; j < 3; j++) {
-            cout << " " << mainBoard[i][j] << " ";
-            if (j < 2) cout << "|";
-        }
-        cout << "\n";
-        if (i < 2) cout << "---+---+---\n";
-    }
-    cout << "\n";
+    return nullptr;
 }
 
-//--------------------------------------- Ultimate_Tic_Tac_Toe_UI Implementation
+// ============ Ultimate_XO_UI Implementation ============
 
-Ultimate_XO_UI::Ultimate_XO_UI():ValidatedUI<char>("Welcome to FCAI Ultimate Tic Tac Toe Game", 3) {}
+Ultimate_XO_UI::Ultimate_XO_UI()
+    : ValidatedUI<char>("=== Ultimate Tic Tac Toe ===\n"
+                        "Win 3 sub-boards in a row to win the game!", 3) {
+}
 
 Player<char>* Ultimate_XO_UI::create_player(string& name, char symbol, PlayerType type) {
-    cout << "Creating " << (type == PlayerType::HUMAN ? "human" : "computer")
-        << " player: " << name << " (" << symbol << ")\n";
-
     return new Player<char>(name, symbol, type);
 }
 
 Move<char>* Ultimate_XO_UI::get_move(Player<char>* player) {
-    int boardRow, boardCol, cellRow, cellCol;
+    Ultimate_XO_Board* board = dynamic_cast<Ultimate_XO_Board*>(player->get_board_ptr());
+
+    if (!board) {
+        cerr << "Error: Invalid board type!\n";
+        return nullptr;
+    }
 
     if (player->get_type() == PlayerType::HUMAN) {
         cout << "\n" << player->get_name() << "'s turn (" << player->get_symbol() << ")\n";
+        cout << "Choose any available board to play in.\n";
 
-        // Get available boards
-        Ultimate_XO_Board* board =
-            dynamic_cast<Ultimate_XO_Board*>(player->get_board_ptr());
+        // Use validated input from ValidatedUI
+        pair<int, int> boardPos = get_validated_position(
+            "Enter board position (row col, 0-2): ", 3, 3);
+        int boardRow = boardPos.first;
+        int boardCol = boardPos.second;
 
-        if (!board) {
-            cerr << "Error: Board is not Ultimate_Tic_Tac_Toe_Board!\n";
-            return nullptr;
-        }
+        // Get cell position with validation
+        pair<int, int> cellPos = get_validated_position(
+            "Enter cell position in that board (row col, 0-2): ", 3, 3);
+        int cellRow = cellPos.first;
+        int cellCol = cellPos.second;
 
-        vector<pair<int, int>> availableBoards = board->get_available_boards();
-
-        cout << "Available boards to play in: ";
-        for (auto& b : availableBoards) {
-            cout << "(" << b.first << "," << b.second << ") ";
-        }
-        cout << "\n";
-
-        cout << "Enter board row and column (0-2): ";
-        cin >> boardRow >> boardCol;
-
-        cout << "Enter cell row and column within board (0-2): ";
-        cin >> cellRow >> cellCol;
-
-        // Encode coordinates: boardRow*3 + cellRow, boardCol*3 + cellCol
-        int encodedX = boardRow * 3 + cellRow;
-        int encodedY = boardCol * 3 + cellCol;
+        // Encode as boardRow*10 + cellRow and boardCol*10 + cellCol
+        int encodedX = boardRow * 10 + cellRow;
+        int encodedY = boardCol * 10 + cellCol;
 
         return new Move<char>(encodedX, encodedY, player->get_symbol());
     }
     else if (player->get_type() == PlayerType::COMPUTER) {
-        // Simple AI: choose random available board and random cell within it
-        Ultimate_XO_Board* board =
-            dynamic_cast<Ultimate_XO_Board*>(player->get_board_ptr());
+        // Random computer player - pick any available board
+        vector<pair<int,int>> availableBoards;
 
-        if (!board) {
-            cerr << "Error: Board is not Ultimate_Tic_Tac_Toe_Board!\n";
-            return nullptr;
+        // Find all available boards
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board->is_board_available(i, j)) {
+                    availableBoards.push_back({i, j});
+                }
+            }
         }
-
-        vector<pair<int, int>> availableBoards = board->get_available_boards();
 
         if (availableBoards.empty()) {
+            cout << "No available boards for computer!\n";
             return nullptr;
         }
 
-        // Choose random available board
-        int boardIndex = rand() % availableBoards.size();
-        boardRow = availableBoards[boardIndex].first;
-        boardCol = availableBoards[boardIndex].second;
+        // Pick random board
+        int boardIdx = rand() % availableBoards.size();
+        int boardRow = availableBoards[boardIdx].first;
+        int boardCol = availableBoards[boardIdx].second;
 
-        // Choose random cell within that board
-        cellRow = rand() % 3;
-        cellCol = rand() % 3;
+        // Pick random empty cell in that board
+        X_O_Board* subBoard = board->get_sub_board(boardRow, boardCol);
+        if (!subBoard) {
+            cout << "Invalid sub-board!\n";
+            return nullptr;
+        }
 
-        cout << "Computer chooses board (" << boardRow << "," << boardCol
-            << "), cell (" << cellRow << "," << cellCol << ")\n";
+        // Get the board matrix to check empty cells
+        auto subMatrix = subBoard->get_board_matrix();
+        vector<pair<int,int>> emptyCells;
 
-        int encodedX = boardRow * 3 + cellRow;
-        int encodedY = boardCol * 3 + cellCol;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                // X_O_Board uses '.' for empty cells, not ' '
+                if (subMatrix[i][j] == ' ' || subMatrix[i][j] == '.') {
+                    emptyCells.push_back({i, j});
+                }
+            }
+        }
+
+        if (emptyCells.empty()) {
+            cout << "No empty cells in selected board!\n";
+            return nullptr;
+        }
+
+        int cellIdx = rand() % emptyCells.size();
+        int cellRow = emptyCells[cellIdx].first;
+        int cellCol = emptyCells[cellIdx].second;
+
+        cout << "\nComputer plays: Board(" << boardRow << "," << boardCol
+             << ") Cell(" << cellRow << "," << cellCol << ")\n";
+
+        int encodedX = boardRow * 10 + cellRow;
+        int encodedY = boardCol * 10 + cellCol;
 
         return new Move<char>(encodedX, encodedY, player->get_symbol());
     }
 
     return nullptr;
+}
+
+void Ultimate_XO_UI::display_board_matrix(const vector<vector<char>>& matrix) const {
+    // This will be called by GameManager - we need to cast and call our custom display
+    // For now, just show a message
+    cout << "\n(Board updated - see full display above)\n";
+}
+
+void Ultimate_XO_UI::display_full_board(Ultimate_XO_Board* board) const {
+    cout << "\n=== MAIN BOARD STATUS ===\n";
+    display_main_board(board);
+
+    cout << "\n=== ALL SUB-BOARDS ===\n";
+    cout << "Format: Board(row,col) where 0,0 is top-left\n\n";
+
+    // Display all 9 sub-boards in a 3x3 layout
+    for (int boardRow = 0; boardRow < 3; boardRow++) {
+        // For each row of boards
+        cout << "  Board Row " << boardRow << ":\n";
+
+        for (int subRow = 0; subRow < 3; subRow++) {
+            // For each row within the sub-boards
+            cout << "  ";  // Indent
+
+            for (int boardCol = 0; boardCol < 3; boardCol++) {
+                X_O_Board* subBoard = board->get_sub_board(boardRow, boardCol);
+                auto subMatrix = subBoard->get_board_matrix();
+
+                if (boardCol > 0) cout << "    ";  // Space between boards
+
+                for (int subCol = 0; subCol < 3; subCol++) {
+                    char cell = subMatrix[subRow][subCol];
+                    cout << " " << cell;
+                    if (subCol < 2) cout << " |";
+                }
+            }
+            cout << "\n";
+
+            if (subRow < 2) {
+                cout << "  ";
+                for (int boardCol = 0; boardCol < 3; boardCol++) {
+                    if (boardCol > 0) cout << "    ";
+                    cout << "-----------";
+                }
+                cout << "\n";
+            }
+        }
+        
+        if (boardRow < 2) {
+            cout << "\n";
+        }
+    }
+    cout << "\n";
+}
+
+void Ultimate_XO_UI::display_main_board(Ultimate_XO_Board* board) const {
+    auto mainBoard = board->get_main_board();
+    
+    cout << "   0   1   2\n";
+    for (int i = 0; i < 3; i++) {
+        cout << i << " ";
+        for (int j = 0; j < 3; j++) {
+            cout << " " << mainBoard[i][j] << " ";
+            if (j < 2) cout << "|";
+        }
+        cout << "\n";
+        if (i < 2) {
+            cout << "  -----------\n";
+        }
+    }
 }

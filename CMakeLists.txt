@@ -16,6 +16,10 @@ add_executable(BoardGames
         infinity_XO.cpp
         Diamond_TicTacToe.cpp
         word.cpp
+        Memory_TicTacToe.cpp
+        pyramid_XO_Classes.cpp
+        FourInARow.cpp
+        ultimate_XO_Classes.cpp
 
         BoardGame_Classes.h
         NumericalTicTacToe.h
@@ -29,7 +33,8 @@ add_executable(BoardGames
         ValidatedUI.h
         Diamond_TicTacToe.h
         word.h
-        Memory_TicTacToe.cpp
         Memory_TicTacToe.h
-        pyramid_XO_Classes.cpp
+        pyramid_XO_Classes.h
+        FourInARow.h
+        ultimate_XO_Classes.h
 )
