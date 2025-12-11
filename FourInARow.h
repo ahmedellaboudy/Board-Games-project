@@ -119,21 +119,33 @@ public:
     ~FourInARow_UI() {}
 
     /**
-     * @brief Create a player based on type
+     * @brief Create a player based on type (supports AI)
      * @param name Player name
      * @param symbol Player symbol ('X' or 'O')
-     * @param type Player type (HUMAN or COMPUTER)
+     * @param type Player type (HUMAN or AI)
      * @return Pointer to created player
      */
     Player<char>* create_player(string& name, char symbol, PlayerType type) override;
 
     /**
-     * @brief Get move from player (human or computer)
+     * @brief Setup players with AI option
+     * @return Array of two players
+     */
+    Player<char>** setup_players() override;
+
+    /**
+     * @brief Get move from player (human or AI)
      * For this game, players only choose a column (0-6)
      * @param player The player making the move
      * @return Move object with column choice
      */
     Move<char>* get_move(Player<char>* player) override;
+
+protected:
+    /**
+     * @brief Override to add AI option
+     */
+    PlayerType get_player_type_choice(string player_label, const vector<string>& options) override;
 };
 
 #endif // FOUR_IN_A_ROW_H

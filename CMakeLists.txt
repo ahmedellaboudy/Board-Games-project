@@ -37,4 +37,6 @@ add_executable(BoardGames
         pyramid_XO_Classes.h
         FourInARow.h
         ultimate_XO_Classes.h
+        SUS_AI_Player.h
+        FourInARow_AI_Player.h
 )

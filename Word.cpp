@@ -125,42 +125,40 @@ bool WordBoard::update_board(Move<char>* move) {
     board[x][y] = toupper(letter);
     n_moves++;
 
-    // Debug: Check for words after each move
-    cout << "\n[Checking for words...]\n";
-
-    // Check row
+    // Check row - only if complete
     string row_word = extract_word(x, 0, 0, 1);
-    cout << "Row " << x << ": " << row_word;
     if (row_word.find(' ') == string::npos) {
+        cout << "Row " << x << ": " << row_word;
         cout << " -> " << (is_valid_word(row_word) ? "VALID!" : "Invalid");
+        cout << "\n";
     }
-    cout << "\n";
 
-    // Check column
+    // Check column - only if complete
     string col_word = extract_word(0, y, 1, 0);
-    cout << "Col " << y << ": " << col_word;
     if (col_word.find(' ') == string::npos) {
+        cout << "Col " << y << ": " << col_word;
         cout << " -> " << (is_valid_word(col_word) ? "VALID!" : "Invalid");
+        cout << "\n";
     }
-    cout << "\n";
 
-    // Check diagonals if applicable
+    // Check main diagonal - only if complete and applicable
     if (x == y) {
         string diag1 = extract_word(0, 0, 1, 1);
-        cout << "Diag \\: " << diag1;
         if (diag1.find(' ') == string::npos) {
+            cout << "Diag \\: " << diag1;
             cout << " -> " << (is_valid_word(diag1) ? "VALID!" : "Invalid");
+            cout << "\n";
         }
-        cout << "\n";
     }
 
+    // Check anti-diagonal - only if complete and applicable
     if (x + y == 2) {
         string diag2 = extract_word(0, 2, 1, -1);
-        cout << "Diag /: " << diag2;
         if (diag2.find(' ') == string::npos) {
+            cout << "Diag /: " << diag2;
             cout << " -> " << (is_valid_word(diag2) ? "VALID!" : "Invalid");
+            cout << "\n";
         }
-        cout << "\n";
     }
 
     return true;

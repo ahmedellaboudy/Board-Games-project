@@ -25,7 +25,7 @@ void display_menu() {
     cout << "         BOARD GAMES COLLECTION \n";
     cout << "=============================================\n";
     cout << " 1.  SUS Game\n";
-    cout << " 2.  Four-in-a-Row (Connect Four)\n";
+    cout << " 2.  Four-in-a-Row \n";
     cout << " 3.  5x5 Tic-Tac-Toe\n";
     cout << " 4.  Word Tic-Tac-Toe\n";
     cout << " 5.  Misere Tic-Tac-Toe\n";
@@ -49,36 +49,7 @@ void play_sus_game() {
     UI<char>* game_ui = new SUS_UI();
     Board<char>* game_board = new SUS_Board();
 
-    Player<char>** players = new Player<char>*[2];
-
-    cout << "\n=== Player Setup ===\n";
-    string name1, name2;
-    cout << "Enter Player 1 name (will use 'S'): ";
-    getline(cin >> ws, name1);
-
-    cout << "Choose Player 1 type:\n1. Human\n2. Computer\n";
-    int choice1;
-    while (!(cin >> choice1) || (choice1 != 1 && choice1 != 2)) {
-        cout << "Invalid choice! Enter 1 or 2: ";
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    }
-    PlayerType type1 = (choice1 == 2) ? PlayerType::COMPUTER : PlayerType::HUMAN;
-
-    cout << "\nEnter Player 2 name (will use 'U'): ";
-    getline(cin >> ws, name2);
-
-    cout << "Choose Player 2 type:\n1. Human\n2. Computer\n";
-    int choice2;
-    while (!(cin >> choice2) || (choice2 != 1 && choice2 != 2)) {
-        cout << "Invalid choice! Enter 1 or 2: ";
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    }
-    PlayerType type2 = (choice2 == 2) ? PlayerType::COMPUTER : PlayerType::HUMAN;
-
-    players[0] = game_ui->create_player(name1, 'S', type1);
-    players[1] = game_ui->create_player(name2, 'U', type2);
+    Player<char>** players = game_ui->setup_players();
 
     players[0]->set_board_ptr(game_board);
     players[1]->set_board_ptr(game_board);
@@ -100,23 +71,31 @@ void play_sus_game() {
             delete move;
             game_ui->display_board_matrix(game_board->get_board_matrix());
 
+            // Show scores after each move
+            auto scores = dynamic_cast<SUS_Board*>(game_board)->get_scores();
+            dynamic_cast<SUS_UI*>(game_ui)->display_scores(scores.first, scores.second);
+
             if (game_board->game_is_over(currentPlayer)) {
                 break;
             }
         }
     }
 
+    // Final results
     auto scores = dynamic_cast<SUS_Board*>(game_board)->get_scores();
+
+    cout << "\n\n";
+    cout << "         GAME OVER!            \n";
     dynamic_cast<SUS_UI*>(game_ui)->display_scores(scores.first, scores.second);
 
     if (scores.first > scores.second) {
-        game_ui->display_message(players[0]->get_name() + " wins with " +
+        game_ui->display_message(players[0]->get_name() + " WINS with " +
                                 to_string(scores.first) + " S-U-S sequences!");
     } else if (scores.second > scores.first) {
-        game_ui->display_message(players[1]->get_name() + " wins with " +
+        game_ui->display_message(players[1]->get_name() + " WINS with " +
                                 to_string(scores.second) + " S-U-S sequences!");
     } else {
-        game_ui->display_message("It's a draw! Both players have " +
+        game_ui->display_message("It's a DRAW! Both players have " +
                                 to_string(scores.first) + " S-U-S sequences!");
     }
 
@@ -156,21 +135,8 @@ void play_5x5_tictactoe() {
 
 void play_word_XO() {
     cout << "\n=== Starting Word Tic-Tac-Toe ===\n";
-
-    WordUI* ui = new WordUI();
-    WordBoard* board = new WordBoard();
-
-    Player<char>** players = ui->setup_players();
-
-    WordGameManager game_manager(board, players, ui);
+    WordGameManager game_manager;
     game_manager.run();
-
-    delete board;
-    delete players[0];
-    delete players[1];
-    delete[] players;
-    delete ui;
-
     cout << "\n*** Game Ended ***\n";
 }
 
@@ -292,32 +258,24 @@ void play_infinity_XO() {
 void play_ultimate_tic_tac_toe() {
     srand(time(0));
 
-    // Create board
     Ultimate_XO_Board* board = new Ultimate_XO_Board();
 
-    // Create UI
     Ultimate_XO_UI* ui = new Ultimate_XO_UI();
 
-    // Setup players
     Player<char>** players = ui->setup_players();
 
-    // Set board for players
     players[0]->set_board_ptr(board);
     players[1]->set_board_ptr(board);
 
-    // Display initial board
     ui->display_full_board(board);
 
-    // Game loop - manual because GameManager's display doesn't work for us
     int currentPlayerIndex = 0;
 
     while (true) {
         Player<char>* currentPlayer = players[currentPlayerIndex];
 
-        // Get move
         Move<char>* move = ui->get_move(currentPlayer);
 
-        // Validate and apply move
         while (!board->update_board(move)) {
             delete move;
             cout << "Invalid move! Try again.\n";
@@ -328,13 +286,11 @@ void play_ultimate_tic_tac_toe() {
 
         // Display board after move
         ui->display_full_board(board);
-
         // Check win
         if (board->is_win(currentPlayer)) {
             cout << "\n*** " << currentPlayer->get_name() << " WINS! ***\n";
             break;
         }
-
         // Check draw
         if (board->is_draw(currentPlayer)) {
             cout << "\n*** GAME IS A DRAW! ***\n";
@@ -345,7 +301,6 @@ void play_ultimate_tic_tac_toe() {
         currentPlayerIndex = 1 - currentPlayerIndex;
     }
 
-    // Cleanup
     delete players[0];
     delete players[1];
     delete[] players;
@@ -362,18 +317,15 @@ void play_memoryTicTacToe() {
 
     Player<char>** players = game_ui->setup_players();
 
-    // Set real board for validation
     players[0]->set_board_ptr(game_board);
     players[1]->set_board_ptr(game_board);
 
-    // Display fake board initially (all blank)
     cout << "\n=== Game Starting - Remember the positions! ===\n";
     game_ui->display_board_matrix(fake_board->get_board_matrix());
 
     Player<char>* currentPlayer = players[0];
     int turn = 0;
 
-    // DURING GAME: Show fake board (always blank)
     while (!game_board->game_is_over(currentPlayer)) {
         currentPlayer = players[turn % 2];
 
@@ -385,9 +337,10 @@ void play_memoryTicTacToe() {
             move = game_ui->get_move(currentPlayer);
         }
 
+        fake_board->update_board(move);
+
         delete move;
 
-        // Show fake board (always blank) - memory challenge!
         game_ui->display_board_matrix(fake_board->get_board_matrix());
 
         if (game_board->game_is_over(currentPlayer)) {
@@ -399,7 +352,6 @@ void play_memoryTicTacToe() {
     cout << "\n=== Game Over! Revealing the board ===\n";
     game_ui->display_board_matrix(game_board->get_board_matrix());
 
-    // Determine winner
     if (game_board->is_win(players[0])) {
         game_ui->display_message(players[0]->get_name() + " wins!");
     } else if (game_board->is_win(players[1])) {
@@ -426,9 +378,8 @@ int main() {
     bool running = true;
 
     cout << "\n";
-    cout << "=============================================\n";
     cout << "  Welcome to the Board Games Application!\n";
-    cout << "=============================================\n";
+
 
     while (running) {
         display_menu();

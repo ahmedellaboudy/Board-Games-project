@@ -117,10 +117,10 @@ Move<char>* Misere_UI::get_move(Player<char>* player) {
         auto pos = get_validated_position(
             "\n" + player->get_name() + " (" + string(1, player->get_symbol()) +
             "), enter your move (row column 0-2): ",
-            3,  // max_row (0-2 means pass 3)
-            3,  // max_col (0-2 means pass 3)
+            3,
+            3,
             player->get_board_ptr(),
-            ' '  // empty symbol
+            ' '
         );
         x = pos.first;
         y = pos.second;

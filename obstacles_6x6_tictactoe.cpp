@@ -100,7 +100,9 @@ int XO_6x6_Board::get_obstacles_count() {
 // XO_6x6_UI Implementation
 // -----------------------------------------------------
 
-XO_6x6_UI::XO_6x6_UI() : ValidatedUI<char>("Welcome to 6x6 Tic-Tac-Toe with Obstacles!", 3) {}
+XO_6x6_UI::XO_6x6_UI() : ValidatedUI<char>("Welcome to 6x6 Tic-Tac-Toe with Obstacles!", 3) {
+    cout << "Game rule: connect 4 (row or column or diagonal) with no obstacles\n";
+}
 
 XO_6x6_UI::~XO_6x6_UI() {}
 
