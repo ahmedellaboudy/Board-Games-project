@@ -1,36 +1,170 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <limits>
 #include "BoardGame_Classes.h"
 #include "NumericalTicTacToe.h"
 #include "XO_4x4_Classes.h"
 #include "XO_5x5_Classes.h"
 #include "MisereTicTacToe.h"
+#include "obstacles_6x6_tictactoe.h"
+#include "infinity_XO.h"
+#include "sus.h"
+#include "Diamond_TicTacToe.h"
+#include "Memory_TicTacToe.h"
+#include "Word.h"
+#include "pyramid_XO_Classes.h"
+#include "ultimate_XO_Classes.h"
+#include "FourInARow.h"
 
 using namespace std;
 
 void display_menu() {
     cout << "\n";
-    cout << "========================================\n";
-    cout << "   BOARD GAMES COLLECTION - Part 1\n";
-    cout << "========================================\n";
-    cout << "1. Numerical Tic-Tac-Toe (Game 9)\n";
-    cout << "2. 4x4 Tic-Tac-Toe (Game 7)\n";
-    cout << "3. 5x5 Tic-Tac-Toe (Game 8)\n";
-    cout << "5. Misere Tic-Tac-Toe\n";
-    cout << "0. Exit\n";
-    cout << "========================================\n";
-    cout << "Choose a game or exit: ";
+    cout << "=============================================\n";
+    cout << "         BOARD GAMES COLLECTION \n";
+    cout << "=============================================\n";
+    cout << " 1.  SUS Game\n";
+    cout << " 2.  Four-in-a-Row \n";
+    cout << " 3.  5x5 Tic-Tac-Toe\n";
+    cout << " 4.  Word Tic-Tac-Toe\n";
+    cout << " 5.  Misere Tic-Tac-Toe\n";
+    cout << " 6.  Diamond Tic-Tac-Toe\n";
+    cout << " 7.  4x4 Tic-Tac-Toe\n";
+    cout << " 8.  Pyramid Tic-Tac-Toe\n";
+    cout << " 9.  Numerical Tic-Tac-Toe\n";
+    cout << " 10. Obstacles 6x6 Tic-Tac-Toe\n";
+    cout << " 11. Infinity XO Tic-Tac-Toe\n";
+    cout << " 12. Ultimate Tic-Tac-Toe (Bonus)\n";
+    cout << " 13. Memory Tic-Tac-Toe (Bonus)\n";
+    cout << " 0.  Exit\n";
+    cout << "=============================================\n";
+    cout << "Choose a game (0-13): ";
 }
 
 // -------------------- Game Functions --------------------
-void play_numerical_tictactoe() {
-    cout << "\n=== Starting Numerical Tic-Tac-Toe ===\n";
-    UI<int>* game_ui = new Numerical_UI();
-    Board<int>* game_board = new Numerical_Board();
-    Player<int>** players = game_ui->setup_players();
 
-    GameManager<int> game_manager(game_board, players, game_ui);
+void play_sus_game() {
+    cout << "\n=== Starting SUS Game ===\n";
+    UI<char>* game_ui = new SUS_UI();
+    Board<char>* game_board = new SUS_Board();
+
+    Player<char>** players = game_ui->setup_players();
+
+    players[0]->set_board_ptr(game_board);
+    players[1]->set_board_ptr(game_board);
+
+    game_ui->display_board_matrix(game_board->get_board_matrix());
+
+    Player<char>* currentPlayer = players[0];
+    while (!game_board->game_is_over(currentPlayer)) {
+        for (int i : {0, 1}) {
+            currentPlayer = players[i];
+            Move<char>* move = game_ui->get_move(currentPlayer);
+
+            while (!game_board->update_board(move)) {
+                cout << "Invalid move! Try again.\n";
+                delete move;
+                move = game_ui->get_move(currentPlayer);
+            }
+
+            delete move;
+            game_ui->display_board_matrix(game_board->get_board_matrix());
+
+            // Show scores after each move
+            auto scores = dynamic_cast<SUS_Board*>(game_board)->get_scores();
+            dynamic_cast<SUS_UI*>(game_ui)->display_scores(scores.first, scores.second);
+
+            if (game_board->game_is_over(currentPlayer)) {
+                break;
+            }
+        }
+    }
+
+    // Final results
+    auto scores = dynamic_cast<SUS_Board*>(game_board)->get_scores();
+
+    cout << "\n\n";
+    cout << "         GAME OVER!            \n";
+    dynamic_cast<SUS_UI*>(game_ui)->display_scores(scores.first, scores.second);
+
+    if (scores.first > scores.second) {
+        game_ui->display_message(players[0]->get_name() + " WINS with " +
+                                to_string(scores.first) + " S-U-S sequences!");
+    } else if (scores.second > scores.first) {
+        game_ui->display_message(players[1]->get_name() + " WINS with " +
+                                to_string(scores.second) + " S-U-S sequences!");
+    } else {
+        game_ui->display_message("It's a DRAW! Both players have " +
+                                to_string(scores.first) + " S-U-S sequences!");
+    }
+
+    delete game_board;
+    delete players[0];
+    delete players[1];
+    delete[] players;
+    delete game_ui;
+
+    cout << "\n*** Game Ended ***\n";
+}
+
+void play_four_in_a_row() {
+    cout << "\n=== Starting Four-in-a-Row (Connect Four) ===\n";
+    UI<char>* game_ui = new FourInARow_UI();
+    Board<char>* game_board = new FourInARow_Board();
+    Player<char>** players = game_ui->setup_players();
+
+    GameManager<char> game_manager(game_board, players, game_ui);
+    game_manager.run();
+
+    delete game_board;
+    delete players[0];
+    delete players[1];
+    delete[] players;
+    delete game_ui;
+
+    cout << "\n*** Game Ended ***\n";
+}
+
+void play_5x5_tictactoe() {
+    cout << "\n=== Starting 5x5 Three-in-a-Row ===\n";
+    XO_5x5_GameManager game_manager;
+    game_manager.run();
+    cout << "\n*** Game Ended ***\n";
+}
+
+void play_word_XO() {
+    cout << "\n=== Starting Word Tic-Tac-Toe ===\n";
+    WordGameManager game_manager;
+    game_manager.run();
+    cout << "\n*** Game Ended ***\n";
+}
+
+void play_misere_tictactoe() {
+    cout << "\n=== Starting Misere Tic-Tac-Toe ===\n";
+    UI<char>* game_ui = new Misere_UI();
+    Board<char>* game_board = new Misere_Board();
+    Player<char>** players = game_ui->setup_players();
+
+    GameManager<char> game_manager(game_board, players, game_ui);
+    game_manager.run();
+
+    delete game_board;
+    delete players[0];
+    delete players[1];
+    delete[] players;
+    delete game_ui;
+
+    cout << "\n*** Game Ended ***\n";
+}
+
+void play_DiamondTICTACTOE() {
+    cout << "\n=== Starting Diamond Tic-Tac-Toe ===\n";
+    UI<char>* game_ui = new Diamond_UI();
+    Board<char>* game_board = new Diamond_board();
+    Player<char>** players = game_ui->setup_players();
+
+    GameManager<char> game_manager(game_board, players, game_ui);
     game_manager.run();
 
     delete game_board;
@@ -60,19 +194,180 @@ void play_4x4_tictactoe() {
     cout << "\n*** Game Ended ***\n";
 }
 
+void play_pyramid_XO() {
+    cout << "\n=== Starting Pyramid Tic-Tac-Toe ===\n";
+    UI<char>* game_ui = new Pyramid_UI();
+    Board<char>* game_board = new Pyramid_Board();
+    Player<char>** players = game_ui->setup_players();
 
-void play_5x5_tictactoe() {
-    cout << "\n=== Starting 5x5 Three-in-a-Row ===\n";
-    XO_5x5_GameManager game_manager;
+    GameManager<char> game_manager(game_board, players, game_ui);
+    game_manager.run();
+
+    delete game_board;
+    delete players[0];
+    delete players[1];
+    delete[] players;
+    delete game_ui;
+
+    cout << "\n*** Game Ended ***\n";
+}
+
+void play_numerical_tictactoe() {
+    cout << "\n=== Starting Numerical Tic-Tac-Toe ===\n";
+    UI<int>* game_ui = new Numerical_UI();
+    Board<int>* game_board = new Numerical_Board();
+    Player<int>** players = game_ui->setup_players();
+
+    GameManager<int> game_manager(game_board, players, game_ui);
+    game_manager.run();
+
+    delete game_board;
+    delete players[0];
+    delete players[1];
+    delete[] players;
+    delete game_ui;
+
+    cout << "\n*** Game Ended ***\n";
+}
+
+void play_6x6_tictactoe() {
+    cout << "\n=== Starting 6x6 Obstacle Four-in-a-Row ===\n";
+    XO_6x6_GameManager game_manager;
     game_manager.run();
     cout << "\n*** Game Ended ***\n";
 }
 
-void play_misere_tictactoe() {
-    cout << "\n=== Starting Misere Tic-Tac-Toe ===\n";
-    MisereTicTacToe game;
-    game.play();
+void play_infinity_XO() {
+    cout << "\n=== Starting 3x3 Infinity XO Tic-Tac-Toe ===\n";
+    UI<char>* game_ui = new infinity_UI();
+    Board<char>* game_board = new infinity_Board();
+    Player<char>** players = game_ui->setup_players();
+
+    GameManager<char> game_manager(game_board, players, game_ui);
+    game_manager.run();
+
+    delete game_board;
+    delete players[0];
+    delete players[1];
+    delete[] players;
+    delete game_ui;
+
     cout << "\n*** Game Ended ***\n";
+}
+
+void play_ultimate_tic_tac_toe() {
+    srand(time(0));
+
+    Ultimate_XO_Board* board = new Ultimate_XO_Board();
+
+    Ultimate_XO_UI* ui = new Ultimate_XO_UI();
+
+    Player<char>** players = ui->setup_players();
+
+    players[0]->set_board_ptr(board);
+    players[1]->set_board_ptr(board);
+
+    ui->display_full_board(board);
+
+    int currentPlayerIndex = 0;
+
+    while (true) {
+        Player<char>* currentPlayer = players[currentPlayerIndex];
+
+        Move<char>* move = ui->get_move(currentPlayer);
+
+        while (!board->update_board(move)) {
+            delete move;
+            cout << "Invalid move! Try again.\n";
+            move = ui->get_move(currentPlayer);
+        }
+
+        delete move;
+
+        // Display board after move
+        ui->display_full_board(board);
+        // Check win
+        if (board->is_win(currentPlayer)) {
+            cout << "\n*** " << currentPlayer->get_name() << " WINS! ***\n";
+            break;
+        }
+        // Check draw
+        if (board->is_draw(currentPlayer)) {
+            cout << "\n*** GAME IS A DRAW! ***\n";
+            break;
+        }
+
+        // Switch player
+        currentPlayerIndex = 1 - currentPlayerIndex;
+    }
+
+    delete players[0];
+    delete players[1];
+    delete[] players;
+    delete ui;
+    delete board;
+}
+
+void play_memoryTicTacToe() {
+    cout << "\n=== Starting Memory Tic-Tac-Toe ===\n";
+
+    Memory_UI* game_ui = new Memory_UI();
+    Memory_Board* game_board = new Memory_Board();
+    Fake_Board* fake_board = new Fake_Board();
+
+    Player<char>** players = game_ui->setup_players();
+
+    players[0]->set_board_ptr(game_board);
+    players[1]->set_board_ptr(game_board);
+
+    cout << "\n=== Game Starting - Remember the positions! ===\n";
+    game_ui->display_board_matrix(fake_board->get_board_matrix());
+
+    Player<char>* currentPlayer = players[0];
+    int turn = 0;
+
+    while (!game_board->game_is_over(currentPlayer)) {
+        currentPlayer = players[turn % 2];
+
+        Move<char>* move = game_ui->get_move(currentPlayer);
+
+        while (!game_board->update_board(move)) {
+            cout << "Invalid move! Try again.\n";
+            delete move;
+            move = game_ui->get_move(currentPlayer);
+        }
+
+        fake_board->update_board(move);
+
+        delete move;
+
+        game_ui->display_board_matrix(fake_board->get_board_matrix());
+
+        if (game_board->game_is_over(currentPlayer)) {
+            break;
+        }
+        turn++;
+    }
+
+    cout << "\n=== Game Over! Revealing the board ===\n";
+    game_ui->display_board_matrix(game_board->get_board_matrix());
+
+    if (game_board->is_win(players[0])) {
+        game_ui->display_message(players[0]->get_name() + " wins!");
+    } else if (game_board->is_win(players[1])) {
+        game_ui->display_message(players[1]->get_name() + " wins!");
+    } else {
+        game_ui->display_message("It's a draw!");
+    }
+
+    delete game_board;
+    delete fake_board;
+    delete players[0];
+    delete players[1];
+    delete[] players;
+    delete game_ui;
+
+    cout << "\n*** Memory Game Ended ***\n";
 }
 
 // -------------------- Main --------------------
@@ -82,24 +377,43 @@ int main() {
     int choice;
     bool running = true;
 
-    cout << "Welcome to the Board Games Application!\n";
+    cout << "\n";
+    cout << "  Welcome to the Board Games Application!\n";
+
 
     while (running) {
         display_menu();
-        cin >> choice;
-        cin.ignore(1000, '\n');
+
+        // Input validation
+        if (!(cin >> choice)) {
+            cout << "\nInvalid input! Please enter a number.\n";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            continue;
+        }
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         switch (choice) {
-            case 1: play_numerical_tictactoe(); break;
-            case 2: play_4x4_tictactoe(); break;
-            case 3: play_5x5_tictactoe(); break;
-            case 4: play_misere_tictactoe(); break;
+            case 1:  play_sus_game(); break;
+            case 2:  play_four_in_a_row(); break;
+            case 3:  play_5x5_tictactoe(); break;
+            case 4:  play_word_XO(); break;
+            case 5:  play_misere_tictactoe(); break;
+            case 6:  play_DiamondTICTACTOE(); break;
+            case 7:  play_4x4_tictactoe(); break;
+            case 8:  play_pyramid_XO(); break;
+            case 9:  play_numerical_tictactoe(); break;
+            case 10: play_6x6_tictactoe(); break;
+            case 11: play_infinity_XO(); break;
+            case 12: play_ultimate_tic_tac_toe(); break;
+            case 13: play_memoryTicTacToe(); break;
             case 0:
-                cout << "\nThank you for playing! Goodbye!\n";
+                cout << "Thank you for playing! Goodbye!\n";
                 running = false;
                 break;
             default:
-                cout << "\nInvalid choice! Please select 0–5.\n";
+                cout << "\nInvalid choice! Please select 0-13.\n";
                 break;
         }
     }
